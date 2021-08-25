@@ -1,9 +1,10 @@
 {
     "name": "@rugal/istio",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "license": "MIT",
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "prepublish": "yarn build && cp package.json bin"
     },
     "dependencies": {
         "@pulumi/kubernetes": "^3.6.3",
