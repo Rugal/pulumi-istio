@@ -4,7 +4,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 
-import {ObjectMeta} from "../meta/v1";
+import { ObjectMeta } from "../meta/v1";
 
 export namespace networking {
     export namespace v1alpha3 {
@@ -25,7 +25,7 @@ export namespace networking {
         }
 
         export interface DestinationRuleSpecSubsetsArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Name of the subset.
              */
@@ -635,18 +635,18 @@ export namespace networking {
             /**
              * The JSON config of the object being patched.
              */
-            value?: pulumi.Input<{[key: string]: any}>;
+            value?: pulumi.Input<{ [key: string]: any }>;
         }
 
         export interface EnvoyFilterSpecWorkloadSelectorArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpecArgs {
-            selector?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            selector?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * A list of server specifications.
              */
@@ -764,7 +764,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * The locality associated with the endpoint.
              */
@@ -773,7 +773,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: pulumi.Input<{[key: string]: pulumi.Input<number>}>;
+            ports?: pulumi.Input<{ [key: string]: pulumi.Input<number> }>;
             serviceAccount?: pulumi.Input<string>;
             /**
              * The load balancing weight associated with the endpoint.
@@ -801,7 +801,7 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelectorArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -909,7 +909,7 @@ export namespace networking {
         }
 
         export interface SidecarSpecWorkloadSelectorArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -1037,15 +1037,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequestArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpHeadersResponseArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpMatchArgs {
@@ -1054,7 +1054,7 @@ export namespace networking {
              * Names of gateways where the rule should be applied.
              */
             gateways?: pulumi.Input<pulumi.Input<string>[]>;
-            headers?: pulumi.Input<{[key: string]: any}>;
+            headers?: pulumi.Input<{ [key: string]: any }>;
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
@@ -1071,9 +1071,9 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: pulumi.Input<{[key: string]: any}>;
+            queryParams?: pulumi.Input<{ [key: string]: any }>;
             scheme?: any;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1082,7 +1082,7 @@ export namespace networking {
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: pulumi.Input<{[key: string]: any}>;
+            withoutHeaders?: pulumi.Input<{ [key: string]: any }>;
         }
 
         export interface VirtualServiceSpecHttpMirrorArgs {
@@ -1190,15 +1190,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequestArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponseArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecTcpArgs {
@@ -1222,7 +1222,7 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: pulumi.Input<number>;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1285,7 +1285,7 @@ export namespace networking {
              * SNI (server name indicator) to match on.
              */
             sniHosts?: pulumi.Input<pulumi.Input<string>[]>;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1327,7 +1327,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * The locality associated with the endpoint.
              */
@@ -1336,7 +1336,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: pulumi.Input<{[key: string]: pulumi.Input<number>}>;
+            ports?: pulumi.Input<{ [key: string]: pulumi.Input<number> }>;
             serviceAccount?: pulumi.Input<string>;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1366,8 +1366,8 @@ export namespace networking {
          * Metadata that will be used for all corresponding `WorkloadEntries`.
          */
         export interface WorkloadGroupSpecMetadataArgs {
-            annotations?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            annotations?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -1378,7 +1378,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * The locality associated with the endpoint.
              */
@@ -1387,7 +1387,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: pulumi.Input<{[key: string]: pulumi.Input<number>}>;
+            ports?: pulumi.Input<{ [key: string]: pulumi.Input<number> }>;
             serviceAccount?: pulumi.Input<string>;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1415,7 +1415,7 @@ export namespace networking {
         }
 
         export interface DestinationRuleSpecSubsetsArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Name of the subset.
              */
@@ -1987,7 +1987,7 @@ export namespace networking {
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpecArgs {
-            selector?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            selector?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * A list of server specifications.
              */
@@ -2105,7 +2105,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * The locality associated with the endpoint.
              */
@@ -2114,7 +2114,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: pulumi.Input<{[key: string]: pulumi.Input<number>}>;
+            ports?: pulumi.Input<{ [key: string]: pulumi.Input<number> }>;
             serviceAccount?: pulumi.Input<string>;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2142,7 +2142,7 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelectorArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -2250,7 +2250,7 @@ export namespace networking {
         }
 
         export interface SidecarSpecWorkloadSelectorArgs {
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -2378,15 +2378,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequestArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpHeadersResponseArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpMatchArgs {
@@ -2395,7 +2395,7 @@ export namespace networking {
              * Names of gateways where the rule should be applied.
              */
             gateways?: pulumi.Input<pulumi.Input<string>[]>;
-            headers?: pulumi.Input<{[key: string]: any}>;
+            headers?: pulumi.Input<{ [key: string]: any }>;
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
@@ -2412,9 +2412,9 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: pulumi.Input<{[key: string]: any}>;
+            queryParams?: pulumi.Input<{ [key: string]: any }>;
             scheme?: any;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2423,7 +2423,7 @@ export namespace networking {
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: pulumi.Input<{[key: string]: any}>;
+            withoutHeaders?: pulumi.Input<{ [key: string]: any }>;
         }
 
         export interface VirtualServiceSpecHttpMirrorArgs {
@@ -2531,15 +2531,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequestArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponseArgs {
-            add?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            add?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             remove?: pulumi.Input<pulumi.Input<string>[]>;
-            set?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            set?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface VirtualServiceSpecTcpArgs {
@@ -2563,7 +2563,7 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: pulumi.Input<number>;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2626,7 +2626,7 @@ export namespace networking {
              * SNI (server name indicator) to match on.
              */
             sniHosts?: pulumi.Input<pulumi.Input<string>[]>;
-            sourceLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            sourceLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2668,7 +2668,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            labels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
             /**
              * The locality associated with the endpoint.
              */
@@ -2677,7 +2677,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: pulumi.Input<{[key: string]: pulumi.Input<number>}>;
+            ports?: pulumi.Input<{ [key: string]: pulumi.Input<number> }>;
             serviceAccount?: pulumi.Input<string>;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2701,7 +2701,7 @@ export namespace security {
             /**
              * Port specific mutual TLS settings.
              */
-            portLevelMtls?: pulumi.Input<{[key: string]: pulumi.Input<inputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtlsArgs>}>;
+            portLevelMtls?: pulumi.Input<{ [key: string]: pulumi.Input<inputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtlsArgs> }>;
             /**
              * The selector determines the workloads to apply the ChannelAuthentication on.
              */
@@ -2729,7 +2729,7 @@ export namespace security {
          * The selector determines the workloads to apply the ChannelAuthentication on.
          */
         export interface PeerAuthenticationSpecSelectorArgs {
-            matchLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            matchLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         /**
@@ -2788,9 +2788,19 @@ export namespace security {
          * The selector determines the workloads to apply the RequestAuthentication on.
          */
         export interface RequestAuthenticationSpecSelectorArgs {
-            matchLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            matchLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
+        export interface AuthorizationRuleSpecArgs {
+
+            selector?: pulumi.Input<outputs.security.v1beta1.AuthorizationRuleSpecSelectorArgs>;
+
+            rules?: pulumi.Input<pulumi.Input<outputs.security.v1beta1.AuthorizationRuleSpecRulesArgs>[]>;
+
+            action?: pulumi.Input<string | outputs.security.v1beta1.ActionSpecType>;
+
+            provider?: pulumi.Input<outputs.security.v1beta1.AuthorizationRuleSpecProviderArgs>;
+        }
     }
 }
 
@@ -2859,7 +2869,7 @@ export namespace telemetry {
             /**
              * Optional.
              */
-            tagOverrides?: pulumi.Input<{[key: string]: pulumi.Input<inputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverridesArgs>}>;
+            tagOverrides?: pulumi.Input<{ [key: string]: pulumi.Input<inputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverridesArgs> }>;
         }
 
         export interface TelemetrySpecMetricsOverridesTagOverridesArgs {
@@ -2884,14 +2894,14 @@ export namespace telemetry {
          * Optional.
          */
         export interface TelemetrySpecSelectorArgs {
-            matchLabels?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+            matchLabels?: pulumi.Input<{ [key: string]: pulumi.Input<string> }>;
         }
 
         export interface TelemetrySpecTracingArgs {
             /**
              * Optional.
              */
-            customTags?: pulumi.Input<{[key: string]: any}>;
+            customTags?: pulumi.Input<{ [key: string]: any }>;
             /**
              * Controls span reporting.
              */

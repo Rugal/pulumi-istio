@@ -3,9 +3,11 @@
 
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+
+import { input as inputs, output as outputs } from "../../types";
 import * as utilities from "../../utilities";
 
-import {ObjectMeta} from "../../meta/v1";
+import { ObjectMeta } from "../../meta/v1";
 
 export class AuthorizationPolicy extends pulumi.CustomResource {
     /**
@@ -40,8 +42,8 @@ export class AuthorizationPolicy extends pulumi.CustomResource {
     /**
      * Configuration for access control on workloads. See more details at: https://istio.io/docs/reference/config/security/authorization-policy.html
      */
-    public readonly spec!: pulumi.Output<any>;
-    public readonly status!: pulumi.Output<{[key: string]: any}>;
+    public readonly spec!: pulumi.Output<outputs.security.v1beta1.AuthorizationRuleSpecRulesArgs>;
+    public readonly status!: pulumi.Output<{ [key: string]: any }>;
 
     /**
      * Create a AuthorizationPolicy resource with the given unique name, arguments, and options.
@@ -51,8 +53,8 @@ export class AuthorizationPolicy extends pulumi.CustomResource {
      * @param opts A bag of options that control this resource's behavior.
      */
     constructor(name: string, args?: AuthorizationPolicyArgs, opts?: pulumi.CustomResourceOptions) {
-        let inputs: pulumi.Inputs = {};
-        opts = opts || {};
+        let inputs: pulumi.Inputs = { };
+        opts = opts || { };
         if (!opts.id) {
             inputs["apiVersion"] = "security.istio.io/v1beta1";
             inputs["kind"] = "AuthorizationPolicy";
@@ -67,7 +69,7 @@ export class AuthorizationPolicy extends pulumi.CustomResource {
             inputs["status"] = undefined /*out*/;
         }
         if (!opts.version) {
-            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
+            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion() });
         }
         super(AuthorizationPolicy.__pulumiType, name, inputs, opts);
     }
@@ -83,6 +85,6 @@ export interface AuthorizationPolicyArgs {
     /**
      * Configuration for access control on workloads. See more details at: https://istio.io/docs/reference/config/security/authorization-policy.html
      */
-    readonly spec?: any;
-    readonly status?: pulumi.Input<{[key: string]: any}>;
+    readonly spec?: pulumi.Input<inputs.security.v1beta1.AuthorizationRuleSpecArgs>;
+    readonly status?: pulumi.Input<{ [key: string]: any }>;
 }

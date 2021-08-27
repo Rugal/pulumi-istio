@@ -4,7 +4,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 
-import {ObjectMeta} from "../meta/v1";
+import { ObjectMeta } from "../meta/v1";
 
 export namespace networking {
     export namespace v1alpha3 {
@@ -25,7 +25,7 @@ export namespace networking {
         }
 
         export interface DestinationRuleSpecSubsets {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * Name of the subset.
              */
@@ -635,18 +635,18 @@ export namespace networking {
             /**
              * The JSON config of the object being patched.
              */
-            value?: {[key: string]: any};
+            value?: { [key: string]: any };
         }
 
         export interface EnvoyFilterSpecWorkloadSelector {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
         }
 
         /**
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpec {
-            selector?: {[key: string]: string};
+            selector?: { [key: string]: string };
             /**
              * A list of server specifications.
              */
@@ -764,7 +764,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * The locality associated with the endpoint.
              */
@@ -773,7 +773,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: {[key: string]: number};
+            ports?: { [key: string]: number };
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -801,7 +801,7 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelector {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
         }
 
         /**
@@ -909,7 +909,7 @@ export namespace networking {
         }
 
         export interface SidecarSpecWorkloadSelector {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
         }
 
         /**
@@ -1037,15 +1037,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequest {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpHeadersResponse {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpMatch {
@@ -1054,7 +1054,7 @@ export namespace networking {
              * Names of gateways where the rule should be applied.
              */
             gateways?: string[];
-            headers?: {[key: string]: any};
+            headers?: { [key: string]: any };
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
@@ -1071,9 +1071,9 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: {[key: string]: any};
+            queryParams?: { [key: string]: any };
             scheme?: any;
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1082,7 +1082,7 @@ export namespace networking {
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: {[key: string]: any};
+            withoutHeaders?: { [key: string]: any };
         }
 
         export interface VirtualServiceSpecHttpMirror {
@@ -1190,15 +1190,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequest {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponse {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecTcp {
@@ -1222,7 +1222,7 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: number;
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1285,7 +1285,7 @@ export namespace networking {
              * SNI (server name indicator) to match on.
              */
             sniHosts?: string[];
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1327,7 +1327,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * The locality associated with the endpoint.
              */
@@ -1336,7 +1336,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: {[key: string]: number};
+            ports?: { [key: string]: number };
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1366,8 +1366,8 @@ export namespace networking {
          * Metadata that will be used for all corresponding `WorkloadEntries`.
          */
         export interface WorkloadGroupSpecMetadata {
-            annotations?: {[key: string]: string};
-            labels?: {[key: string]: string};
+            annotations?: { [key: string]: string };
+            labels?: { [key: string]: string };
         }
 
         /**
@@ -1378,7 +1378,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * The locality associated with the endpoint.
              */
@@ -1387,7 +1387,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: {[key: string]: number};
+            ports?: { [key: string]: number };
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1415,7 +1415,7 @@ export namespace networking {
         }
 
         export interface DestinationRuleSpecSubsets {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * Name of the subset.
              */
@@ -1987,7 +1987,7 @@ export namespace networking {
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpec {
-            selector?: {[key: string]: string};
+            selector?: { [key: string]: string };
             /**
              * A list of server specifications.
              */
@@ -2105,7 +2105,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * The locality associated with the endpoint.
              */
@@ -2114,7 +2114,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: {[key: string]: number};
+            ports?: { [key: string]: number };
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2142,7 +2142,7 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelector {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
         }
 
         /**
@@ -2250,7 +2250,7 @@ export namespace networking {
         }
 
         export interface SidecarSpecWorkloadSelector {
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
         }
 
         /**
@@ -2378,15 +2378,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequest {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpHeadersResponse {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpMatch {
@@ -2395,7 +2395,7 @@ export namespace networking {
              * Names of gateways where the rule should be applied.
              */
             gateways?: string[];
-            headers?: {[key: string]: any};
+            headers?: { [key: string]: any };
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
@@ -2412,9 +2412,9 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: {[key: string]: any};
+            queryParams?: { [key: string]: any };
             scheme?: any;
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2423,7 +2423,7 @@ export namespace networking {
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: {[key: string]: any};
+            withoutHeaders?: { [key: string]: any };
         }
 
         export interface VirtualServiceSpecHttpMirror {
@@ -2531,15 +2531,15 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequest {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponse {
-            add?: {[key: string]: string};
+            add?: { [key: string]: string };
             remove?: string[];
-            set?: {[key: string]: string};
+            set?: { [key: string]: string };
         }
 
         export interface VirtualServiceSpecTcp {
@@ -2563,7 +2563,7 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: number;
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2626,7 +2626,7 @@ export namespace networking {
              * SNI (server name indicator) to match on.
              */
             sniHosts?: string[];
-            sourceLabels?: {[key: string]: string};
+            sourceLabels?: { [key: string]: string };
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2668,7 +2668,7 @@ export namespace networking {
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: {[key: string]: string};
+            labels?: { [key: string]: string };
             /**
              * The locality associated with the endpoint.
              */
@@ -2677,7 +2677,7 @@ export namespace networking {
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: {[key: string]: number};
+            ports?: { [key: string]: number };
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2701,7 +2701,7 @@ export namespace security {
             /**
              * Port specific mutual TLS settings.
              */
-            portLevelMtls?: {[key: string]: outputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtls};
+            portLevelMtls?: { [key: string]: outputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtls };
             /**
              * The selector determines the workloads to apply the ChannelAuthentication on.
              */
@@ -2729,7 +2729,7 @@ export namespace security {
          * The selector determines the workloads to apply the ChannelAuthentication on.
          */
         export interface PeerAuthenticationSpecSelector {
-            matchLabels?: {[key: string]: string};
+            matchLabels?: { [key: string]: string };
         }
 
         /**
@@ -2788,9 +2788,108 @@ export namespace security {
          * The selector determines the workloads to apply the RequestAuthentication on.
          */
         export interface RequestAuthenticationSpecSelector {
-            matchLabels?: {[key: string]: string};
+            matchLabels?: { [key: string]: string };
         }
 
+
+        export interface AuthorizationRuleSpecSelectorArgs {
+            /**
+             * matchLabels is a map of {key,value} pairs. 
+             * A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, 
+             * whose key field is "key", the operator is "In", 
+             * and the values array contains only "value". 
+             * The requirements are ANDed.
+             */
+            matchLabels?: { [key: string]: string; };
+        }
+
+        export interface AuthorizationRuleSpecRulesArgs {
+            from?: AuthorizationRuleSpecRulesFromArgs[];
+
+            to?: AuthorizationRuleSpecRulesToArgs[];
+
+            condition?: AuthorizationRuleSpecRulesWhenArgs[];
+        }
+
+        export interface AuthorizationRuleSpecRulesFromArgs {
+            source: AuthorizationRuleSpecRulesFromSourceArgs;
+        }
+
+        export interface AuthorizationRuleSpecRulesFromSourceArgs {
+            principals?: string[];
+
+            notPrincipals?: string[];
+
+            requestPrincipals?: string[];
+
+            notRequestPrincipals?: string[];
+
+            namespaces?: string[];
+
+            notNamespaces?: string[];
+
+            ipBlocks?: string[];
+
+            notIpBlocks?: string[];
+
+            remoteIpBlocks?: string[];
+
+            notRemoteIpBlocks?: string[];
+        }
+
+        export interface AuthorizationRuleSpecRulesToArgs {
+            operation: AuthorizationRuleSpecRulesToOperationArgs;
+        }
+
+        export interface AuthorizationRuleSpecRulesToOperationArgs {
+            hosts?: string[];
+
+            notHosts?: string[];
+
+            ports?: string[];
+
+            notPorts?: string[];
+
+            methods?: string[];
+
+            notMethods?: string[];
+
+            paths?: string[];
+
+            notPaths?: string[];
+        }
+
+        export interface AuthorizationRuleSpecRulesWhenArgs {
+
+            /**
+             * List of available value.
+             * https://istio.io/latest/docs/reference/config/security/conditions/
+             */
+            key: string;
+
+            values?: string[];
+
+            notValues?: string[];
+        }
+
+        /**
+         * Specifies the name of the extension provider. 
+         * The list of available providers is defined in the MeshConfig. 
+         * Note, currently at most 1 extension provider is allowed per workload. 
+         * Different workloads can use different extension provider.
+         */
+        export interface AuthorizationRuleSpecProviderArgs {
+            name?: string;
+        }
+
+        export declare const ActionSpecType: {
+            readonly ALLOW: "ALLOW";
+            readonly DENY: "DENY";
+            readonly AUDIT: "AUDIT";
+            readonly CUSTOM: "CUSTOM";
+        };
+
+        export declare type ActionSpecType = (typeof ActionSpecType)[keyof typeof ActionSpecType];
     }
 }
 
@@ -2859,7 +2958,7 @@ export namespace telemetry {
             /**
              * Optional.
              */
-            tagOverrides?: {[key: string]: outputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverrides};
+            tagOverrides?: { [key: string]: outputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverrides };
         }
 
         export interface TelemetrySpecMetricsOverridesTagOverrides {
@@ -2884,14 +2983,14 @@ export namespace telemetry {
          * Optional.
          */
         export interface TelemetrySpecSelector {
-            matchLabels?: {[key: string]: string};
+            matchLabels?: { [key: string]: string };
         }
 
         export interface TelemetrySpecTracing {
             /**
              * Optional.
              */
-            customTags?: {[key: string]: any};
+            customTags?: { [key: string]: any };
             /**
              * Controls span reporting.
              */
