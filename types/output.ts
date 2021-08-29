@@ -2808,7 +2808,7 @@ export namespace security {
 
             to?: AuthorizationRuleSpecRulesToArgs[];
 
-            condition?: AuthorizationRuleSpecRulesWhenArgs[];
+            when?: AuthorizationRuleSpecRulesWhenArgs[];
         }
 
         export interface AuthorizationRuleSpecRulesFromArgs {
