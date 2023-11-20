@@ -9,55 +9,55 @@ import * as utilities from "../../utilities";
 
 import {ObjectMeta} from "../../meta/v1";
 
-export class DestinationRule extends pulumi.CustomResource {
+export class WorkloadGroup extends pulumi.CustomResource {
     /**
-     * Get an existing DestinationRule resource's state with the given name, ID, and optional extra
+     * Get an existing WorkloadGroup resource's state with the given name, ID, and optional extra
      * properties used to qualify the lookup.
      *
      * @param name The _unique_ name of the resulting resource.
      * @param id The _unique_ provider ID of the resource to lookup.
      * @param opts Optional settings to control the behavior of the CustomResource.
      */
-    public static get(name: string, id: pulumi.Input<pulumi.ID>, opts?: pulumi.CustomResourceOptions): DestinationRule {
-        return new DestinationRule(name, undefined as any, { ...opts, id: id });
+    public static get(name: string, id: pulumi.Input<pulumi.ID>, opts?: pulumi.CustomResourceOptions): WorkloadGroup {
+        return new WorkloadGroup(name, undefined as any, { ...opts, id: id });
     }
 
     /** @internal */
-    public static readonly __pulumiType = 'kubernetes:networking.istio.io/v1alpha3:DestinationRule';
+    public static readonly __pulumiType = 'kubernetes:networking.istio.io/v1beta1:WorkloadGroup';
 
     /**
-     * Returns true if the given object is an instance of DestinationRule.  This is designed to work even
+     * Returns true if the given object is an instance of WorkloadGroup.  This is designed to work even
      * when multiple copies of the Pulumi SDK have been loaded into the same process.
      */
-    public static isInstance(obj: any): obj is DestinationRule {
+    public static isInstance(obj: any): obj is WorkloadGroup {
         if (obj === undefined || obj === null) {
             return false;
         }
-        return obj['__pulumiType'] === DestinationRule.__pulumiType;
+        return obj['__pulumiType'] === WorkloadGroup.__pulumiType;
     }
 
-    public readonly apiVersion!: pulumi.Output<"networking.istio.io/v1alpha3">;
-    public readonly kind!: pulumi.Output<"DestinationRule">;
+    public readonly apiVersion!: pulumi.Output<"networking.istio.io/v1beta1">;
+    public readonly kind!: pulumi.Output<"WorkloadGroup">;
     public readonly metadata!: pulumi.Output<k8s.types.output.meta.v1.ObjectMeta>;
     /**
-     * Configuration affecting load balancing, outlier detection, etc. See more details at: https://istio.io/docs/reference/config/networking/destination-rule.html
+     * `WorkloadGroup` enables specifying the properties of a single workload for bootstrap and provides a template for `WorkloadEntry`, similar to how `Deployment` specifies properties of workloads via `Pod` templates.
      */
-    public readonly spec!: pulumi.Output<outputs.networking.v1alpha3.DestinationRuleSpec>;
+    public readonly spec!: pulumi.Output<outputs.networking.v1beta1.WorkloadGroupSpec>;
     public readonly status!: pulumi.Output<{[key: string]: any}>;
 
     /**
-     * Create a DestinationRule resource with the given unique name, arguments, and options.
+     * Create a WorkloadGroup resource with the given unique name, arguments, and options.
      *
      * @param name The _unique_ name of the resource.
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
-    constructor(name: string, args?: DestinationRuleArgs, opts?: pulumi.CustomResourceOptions) {
+    constructor(name: string, args?: WorkloadGroupArgs, opts?: pulumi.CustomResourceOptions) {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            resourceInputs["apiVersion"] = "networking.istio.io/v1alpha3";
-            resourceInputs["kind"] = "DestinationRule";
+            resourceInputs["apiVersion"] = "networking.istio.io/v1beta1";
+            resourceInputs["kind"] = "WorkloadGroup";
             resourceInputs["metadata"] = args ? args.metadata : undefined;
             resourceInputs["spec"] = args ? args.spec : undefined;
             resourceInputs["status"] = args ? args.status : undefined;
@@ -69,20 +69,20 @@ export class DestinationRule extends pulumi.CustomResource {
             resourceInputs["status"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
-        super(DestinationRule.__pulumiType, name, resourceInputs, opts);
+        super(WorkloadGroup.__pulumiType, name, resourceInputs, opts);
     }
 }
 
 /**
- * The set of arguments for constructing a DestinationRule resource.
+ * The set of arguments for constructing a WorkloadGroup resource.
  */
-export interface DestinationRuleArgs {
-    apiVersion?: pulumi.Input<"networking.istio.io/v1alpha3">;
-    kind?: pulumi.Input<"DestinationRule">;
+export interface WorkloadGroupArgs {
+    apiVersion?: pulumi.Input<"networking.istio.io/v1beta1">;
+    kind?: pulumi.Input<"WorkloadGroup">;
     metadata?: pulumi.Input<ObjectMeta>;
     /**
-     * Configuration affecting load balancing, outlier detection, etc. See more details at: https://istio.io/docs/reference/config/networking/destination-rule.html
+     * `WorkloadGroup` enables specifying the properties of a single workload for bootstrap and provides a template for `WorkloadEntry`, similar to how `Deployment` specifies properties of workloads via `Pod` templates.
      */
-    spec?: pulumi.Input<inputs.networking.v1alpha3.DestinationRuleSpecArgs>;
+    spec?: pulumi.Input<inputs.networking.v1beta1.WorkloadGroupSpecArgs>;
     status?: pulumi.Input<{[key: string]: any}>;
 }

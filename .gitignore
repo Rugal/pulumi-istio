@@ -29,3 +29,7 @@ Gopkg.lock
 .classpath
 kubeconfig
 Pulumi.*.yaml
+
+src/
+
+istio**/

@@ -2,9 +2,132 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
-import { input as inputs, output as outputs } from "../types";
+import * as inputs from "../types/input";
+import * as outputs from "../types/output";
 
-import { ObjectMeta } from "../meta/v1";
+import {ObjectMeta} from "../meta/v1";
+
+export namespace extensions {
+    export namespace v1alpha1 {
+        /**
+         * Extend the functionality provided by the Istio proxy through WebAssembly filters. See more details at: https://istio.io/docs/reference/config/proxy_extensions/wasm-plugin.html
+         */
+        export interface WasmPluginSpec {
+            /**
+             * Specifies the failure behavior for the plugin due to fatal errors.
+             */
+            failStrategy?: string;
+            /**
+             * The pull behaviour to be applied when fetching Wasm module by either OCI image or http/https.
+             */
+            imagePullPolicy?: string;
+            /**
+             * Credentials to use for OCI image pulling.
+             */
+            imagePullSecret?: string;
+            /**
+             * Specifies the criteria to determine which traffic is passed to WasmPlugin.
+             */
+            match?: outputs.extensions.v1alpha1.WasmPluginSpecMatch[];
+            /**
+             * Determines where in the filter chain this `WasmPlugin` is to be injected.
+             */
+            phase?: string;
+            /**
+             * The configuration that will be passed on to the plugin.
+             */
+            pluginConfig?: {[key: string]: any};
+            /**
+             * The plugin name to be used in the Envoy configuration (used to be called `rootID`).
+             */
+            pluginName?: string;
+            /**
+             * Determines ordering of `WasmPlugins` in the same `phase`.
+             */
+            priority?: number;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this plugin configuration should be applied.
+             */
+            selector?: outputs.extensions.v1alpha1.WasmPluginSpecSelector;
+            /**
+             * SHA256 checksum that will be used to verify Wasm module or OCI container.
+             */
+            sha256?: string;
+            targetRef?: outputs.extensions.v1alpha1.WasmPluginSpecTargetRef;
+            /**
+             * Specifies the type of Wasm Extension to be used.
+             */
+            type?: string;
+            /**
+             * URL of a Wasm module or OCI container.
+             */
+            url: string;
+            verificationKey?: string;
+            /**
+             * Configuration for a Wasm VM.
+             */
+            vmConfig?: outputs.extensions.v1alpha1.WasmPluginSpecVmConfig;
+        }
+
+        export interface WasmPluginSpecMatch {
+            /**
+             * Criteria for selecting traffic by their direction.
+             */
+            mode?: string;
+            /**
+             * Criteria for selecting traffic by their destination port.
+             */
+            ports?: outputs.extensions.v1alpha1.WasmPluginSpecMatchPorts[];
+        }
+
+        export interface WasmPluginSpecMatchPorts {
+            number: number;
+        }
+
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this plugin configuration should be applied.
+         */
+        export interface WasmPluginSpecSelector {
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
+        }
+
+        export interface WasmPluginSpecTargetRef {
+            group?: string;
+            kind?: string;
+            name?: string;
+            namespace?: string;
+        }
+
+        /**
+         * Configuration for a Wasm VM.
+         */
+        export interface WasmPluginSpecVmConfig {
+            /**
+             * Specifies environment variables to be injected to this VM.
+             */
+            env?: outputs.extensions.v1alpha1.WasmPluginSpecVmConfigEnv[];
+        }
+
+        export interface WasmPluginSpecVmConfigEnv {
+            /**
+             * Name of the environment variable.
+             */
+            name: string;
+            /**
+             * Value for the environment variable.
+             */
+            value?: string;
+            /**
+             * Source for the environment variable's value.
+             */
+            valueFrom?: string;
+        }
+
+    }
+}
 
 export namespace networking {
     export namespace v1alpha3 {
@@ -19,17 +142,30 @@ export namespace networking {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
+            /**
+             * One or more named sets that represent individual versions of a service.
+             */
             subsets?: outputs.networking.v1alpha3.DestinationRuleSpecSubsets[];
+            /**
+             * Traffic policies to apply (load balancing policy, connection pool sizes, outlier detection).
+             */
             trafficPolicy?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicy;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this `DestinationRule` configuration should be applied.
+             */
+            workloadSelector?: outputs.networking.v1alpha3.DestinationRuleSpecWorkloadSelector;
         }
 
         export interface DestinationRuleSpecSubsets {
-            labels?: { [key: string]: string };
+            /**
+             * Labels apply a filter over the endpoints of a service in the service registry.
+             */
+            labels?: {[key: string]: string};
             /**
              * Name of the subset.
              */
-            name?: string;
+            name: string;
             /**
              * Traffic policies that apply to this subset.
              */
@@ -54,6 +190,10 @@ export namespace networking {
              * TLS related settings for connections to the upstream service.
              */
             tls?: outputs.networking.v1alpha3.DestinationRuleSpecSubsetsTrafficPolicyTls;
+            /**
+             * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+             */
+            tunnel?: outputs.networking.v1alpha3.DestinationRuleSpecSubsetsTrafficPolicyTunnel;
         }
 
         export interface DestinationRuleSpecSubsetsTrafficPolicyConnectionPool {
@@ -76,11 +216,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -91,6 +231,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -106,6 +249,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -124,7 +271,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -142,12 +295,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -162,6 +324,9 @@ export namespace networking {
              */
             loadBalancer?: any;
             outlierDetection?: outputs.networking.v1alpha3.DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsOutlierDetection;
+            /**
+             * Specifies the number of a port on the destination service on which this policy is being applied.
+             */
             port?: outputs.networking.v1alpha3.DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsPort;
             /**
              * TLS related settings for connections to the upstream service.
@@ -189,11 +354,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -204,6 +369,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -219,6 +387,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -237,7 +409,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -255,12 +433,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -268,6 +455,9 @@ export namespace networking {
             splitExternalLocalOriginErrors?: boolean;
         }
 
+        /**
+         * Specifies the number of a port on the destination service on which this policy is being applied.
+         */
         export interface DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsPort {
             number?: number;
         }
@@ -276,12 +466,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -291,6 +494,9 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
@@ -298,12 +504,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecSubsetsTrafficPolicyTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -313,9 +532,33 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
+        /**
+         * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+         */
+        export interface DestinationRuleSpecSubsetsTrafficPolicyTunnel {
+            /**
+             * Specifies which protocol to use for tunneling the downstream connection.
+             */
+            protocol?: string;
+            /**
+             * Specifies a host to which the downstream connection is tunneled.
+             */
+            targetHost: string;
+            /**
+             * Specifies a port to which the downstream connection is tunneled.
+             */
+            targetPort: number;
+        }
+
+        /**
+         * Traffic policies to apply (load balancing policy, connection pool sizes, outlier detection).
+         */
         export interface DestinationRuleSpecTrafficPolicy {
             connectionPool?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicyConnectionPool;
             /**
@@ -331,6 +574,10 @@ export namespace networking {
              * TLS related settings for connections to the upstream service.
              */
             tls?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicyTls;
+            /**
+             * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+             */
+            tunnel?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicyTunnel;
         }
 
         export interface DestinationRuleSpecTrafficPolicyConnectionPool {
@@ -353,11 +600,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -368,6 +615,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -383,6 +633,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -401,7 +655,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -419,12 +679,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -439,6 +708,9 @@ export namespace networking {
              */
             loadBalancer?: any;
             outlierDetection?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicyPortLevelSettingsOutlierDetection;
+            /**
+             * Specifies the number of a port on the destination service on which this policy is being applied.
+             */
             port?: outputs.networking.v1alpha3.DestinationRuleSpecTrafficPolicyPortLevelSettingsPort;
             /**
              * TLS related settings for connections to the upstream service.
@@ -466,11 +738,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -481,6 +753,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -496,6 +771,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -514,7 +793,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -532,12 +817,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -545,6 +839,9 @@ export namespace networking {
             splitExternalLocalOriginErrors?: boolean;
         }
 
+        /**
+         * Specifies the number of a port on the destination service on which this policy is being applied.
+         */
         export interface DestinationRuleSpecTrafficPolicyPortLevelSettingsPort {
             number?: number;
         }
@@ -553,12 +850,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecTrafficPolicyPortLevelSettingsTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -568,6 +878,9 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
@@ -575,12 +888,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecTrafficPolicyTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -590,7 +916,38 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
+        }
+
+        /**
+         * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+         */
+        export interface DestinationRuleSpecTrafficPolicyTunnel {
+            /**
+             * Specifies which protocol to use for tunneling the downstream connection.
+             */
+            protocol?: string;
+            /**
+             * Specifies a host to which the downstream connection is tunneled.
+             */
+            targetHost: string;
+            /**
+             * Specifies a port to which the downstream connection is tunneled.
+             */
+            targetPort: number;
+        }
+
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this `DestinationRule` configuration should be applied.
+         */
+        export interface DestinationRuleSpecWorkloadSelector {
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
         }
 
         /**
@@ -605,10 +962,16 @@ export namespace networking {
              * Priority defines the order in which patch sets are applied within a context.
              */
             priority?: number;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this patch configuration should be applied.
+             */
             workloadSelector?: outputs.networking.v1alpha3.EnvoyFilterSpecWorkloadSelector;
         }
 
         export interface EnvoyFilterSpecConfigPatches {
+            /**
+             * Specifies where in the Envoy configuration, the patch should be applied.
+             */
             applyTo?: string;
             /**
              * Match on listener/route configuration/cluster.
@@ -635,18 +998,27 @@ export namespace networking {
             /**
              * The JSON config of the object being patched.
              */
-            value?: { [key: string]: any };
+            value?: {[key: string]: any};
         }
 
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this patch configuration should be applied.
+         */
         export interface EnvoyFilterSpecWorkloadSelector {
-            labels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.
+             */
+            labels?: {[key: string]: string};
         }
 
         /**
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpec {
-            selector?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which this gateway configuration should be applied.
+             */
+            selector?: {[key: string]: string};
             /**
              * A list of server specifications.
              */
@@ -654,36 +1026,45 @@ export namespace networking {
         }
 
         export interface GatewaySpecServers {
+            /**
+             * The ip or the Unix domain socket to which the listener should be bound to.
+             */
             bind?: string;
             defaultEndpoint?: string;
             /**
              * One or more hosts exposed by this gateway.
              */
-            hosts?: string[];
+            hosts: string[];
             /**
              * An optional name of the server, when set must be unique across all servers.
              */
             name?: string;
-            port?: outputs.networking.v1alpha3.GatewaySpecServersPort;
+            /**
+             * The Port on which the proxy should listen for incoming connections.
+             */
+            port: outputs.networking.v1alpha3.GatewaySpecServersPort;
             /**
              * Set of TLS related options that govern the server's behavior.
              */
             tls?: outputs.networking.v1alpha3.GatewaySpecServersTls;
         }
 
+        /**
+         * The Port on which the proxy should listen for incoming connections.
+         */
         export interface GatewaySpecServersPort {
             /**
              * Label assigned to the port.
              */
-            name?: string;
+            name: string;
             /**
              * A valid non-negative integer port number.
              */
-            number?: number;
+            number: number;
             /**
              * The protocol exposed on the port.
              */
-            protocol?: string;
+            protocol: string;
             targetPort?: number;
         }
 
@@ -692,14 +1073,20 @@ export namespace networking {
          */
         export interface GatewaySpecServersTls {
             /**
-             * REQUIRED if mode is `MUTUAL`.
+             * REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.
              */
             caCertificates?: string;
             /**
              * Optional: If specified, only support the specified cipher list.
              */
             cipherSuites?: string[];
+            /**
+             * For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.
+             */
             httpsRedirect?: boolean;
             /**
              * Optional: Maximum TLS protocol version.
@@ -709,6 +1096,9 @@ export namespace networking {
              * Optional: Minimum TLS protocol version.
              */
             minProtocolVersion?: string;
+            /**
+             * Optional: Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
@@ -718,8 +1108,17 @@ export namespace networking {
              * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
              */
             serverCertificate?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate presented by the client.
+             */
             subjectAltNames?: string[];
+            /**
+             * An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.
+             */
             verifyCertificateHash?: string[];
+            /**
+             * An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.
+             */
             verifyCertificateSpki?: string[];
         }
 
@@ -742,16 +1141,22 @@ export namespace networking {
             /**
              * The hosts associated with the ServiceEntry.
              */
-            hosts?: string[];
+            hosts: string[];
+            /**
+             * Specify whether the service should be considered external to the mesh or part of the mesh.
+             */
             location?: string;
             /**
              * The ports associated with the external service.
              */
             ports?: outputs.networking.v1alpha3.ServiceEntrySpecPorts[];
             /**
-             * Service discovery mode for the hosts.
+             * Service resolution mode for the hosts.
              */
             resolution?: string;
+            /**
+             * If specified, the proxy will verify that the server certificate's subject alternate name matches one of the specified values.
+             */
             subjectAltNames?: string[];
             /**
              * Applicable only for MESH_INTERNAL services.
@@ -760,20 +1165,29 @@ export namespace networking {
         }
 
         export interface ServiceEntrySpecEndpoints {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
             address?: string;
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: { [key: string]: string };
+            labels?: {[key: string]: string};
             /**
              * The locality associated with the endpoint.
              */
             locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
             network?: string;
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: { [key: string]: number };
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -785,15 +1199,18 @@ export namespace networking {
             /**
              * Label assigned to the port.
              */
-            name?: string;
+            name: string;
             /**
              * A valid non-negative integer port number.
              */
-            number?: number;
+            number: number;
             /**
              * The protocol exposed on the port.
              */
             protocol?: string;
+            /**
+             * The port number on the endpoint where the traffic will be received.
+             */
             targetPort?: number;
         }
 
@@ -801,26 +1218,51 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelector {
-            labels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.
+             */
+            labels?: {[key: string]: string};
         }
 
         /**
          * Configuration affecting network reachability of a sidecar. See more details at: https://istio.io/docs/reference/config/networking/sidecar.html
          */
         export interface SidecarSpec {
+            /**
+             * Egress specifies the configuration of the sidecar for processing outbound traffic from the attached workload instance to other services in the mesh.
+             */
             egress?: outputs.networking.v1alpha3.SidecarSpecEgress[];
+            /**
+             * Settings controlling the volume of connections Envoy will accept from the network.
+             */
+            inboundConnectionPool?: outputs.networking.v1alpha3.SidecarSpecInboundConnectionPool;
+            /**
+             * Ingress specifies the configuration of the sidecar for processing inbound traffic to the attached workload instance.
+             */
             ingress?: outputs.networking.v1alpha3.SidecarSpecIngress[];
             /**
              * Configuration for the outbound traffic policy.
              */
             outboundTrafficPolicy?: outputs.networking.v1alpha3.SidecarSpecOutboundTrafficPolicy;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this `Sidecar` configuration should be applied.
+             */
             workloadSelector?: outputs.networking.v1alpha3.SidecarSpecWorkloadSelector;
         }
 
         export interface SidecarSpecEgress {
+            /**
+             * The IP(IPv4 or IPv6) or the Unix domain socket to which the listener should be bound to.
+             */
             bind?: string;
+            /**
+             * When the bind address is an IP, the captureMode option dictates how traffic to the listener is expected to be captured (or not).
+             */
             captureMode?: string;
-            hosts?: string[];
+            /**
+             * One or more service hosts exposed by the listener in `namespace/dnsName` format.
+             */
+            hosts: string[];
             /**
              * The port associated with the listener.
              */
@@ -846,17 +1288,207 @@ export namespace networking {
             targetPort?: number;
         }
 
+        /**
+         * Settings controlling the volume of connections Envoy will accept from the network.
+         */
+        export interface SidecarSpecInboundConnectionPool {
+            /**
+             * HTTP connection pool settings.
+             */
+            http?: outputs.networking.v1alpha3.SidecarSpecInboundConnectionPoolHttp;
+            /**
+             * Settings common to both HTTP and TCP upstream connections.
+             */
+            tcp?: outputs.networking.v1alpha3.SidecarSpecInboundConnectionPoolTcp;
+        }
+
+        /**
+         * HTTP connection pool settings.
+         */
+        export interface SidecarSpecInboundConnectionPoolHttp {
+            /**
+             * Specify if http1.1 connection should be upgraded to http2 for the associated destination.
+             */
+            h2UpgradePolicy?: string;
+            /**
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
+             */
+            http1MaxPendingRequests?: number;
+            /**
+             * Maximum number of active requests to a destination.
+             */
+            http2MaxRequests?: number;
+            /**
+             * The idle timeout for upstream connection pool connections.
+             */
+            idleTimeout?: string;
+            /**
+             * Maximum number of requests per connection to a backend.
+             */
+            maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
+            maxRetries?: number;
+            /**
+             * If set to true, client protocol will be preserved while initiating connection to backend.
+             */
+            useClientProtocol?: boolean;
+        }
+
+        /**
+         * Settings common to both HTTP and TCP upstream connections.
+         */
+        export interface SidecarSpecInboundConnectionPoolTcp {
+            /**
+             * TCP connection timeout.
+             */
+            connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
+            /**
+             * Maximum number of HTTP1 /TCP connections to a destination host.
+             */
+            maxConnections?: number;
+            /**
+             * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+             */
+            tcpKeepalive?: outputs.networking.v1alpha3.SidecarSpecInboundConnectionPoolTcpTcpKeepalive;
+        }
+
+        /**
+         * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+         */
+        export interface SidecarSpecInboundConnectionPoolTcpTcpKeepalive {
+            /**
+             * The time duration between keep-alive probes.
+             */
+            interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
+            probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
+            time?: string;
+        }
+
         export interface SidecarSpecIngress {
             /**
-             * The IP to which the listener should be bound.
+             * The IP(IPv4 or IPv6) to which the listener should be bound.
              */
             bind?: string;
+            /**
+             * The captureMode option dictates how traffic to the listener is expected to be captured (or not).
+             */
             captureMode?: string;
+            /**
+             * Settings controlling the volume of connections Envoy will accept from the network.
+             */
+            connectionPool?: outputs.networking.v1alpha3.SidecarSpecIngressConnectionPool;
+            /**
+             * The IP endpoint or Unix domain socket to which traffic should be forwarded to.
+             */
             defaultEndpoint?: string;
             /**
              * The port associated with the listener.
              */
-            port?: outputs.networking.v1alpha3.SidecarSpecIngressPort;
+            port: outputs.networking.v1alpha3.SidecarSpecIngressPort;
+            /**
+             * Set of TLS related options that will enable TLS termination on the sidecar for requests originating from outside the mesh.
+             */
+            tls?: outputs.networking.v1alpha3.SidecarSpecIngressTls;
+        }
+
+        /**
+         * Settings controlling the volume of connections Envoy will accept from the network.
+         */
+        export interface SidecarSpecIngressConnectionPool {
+            /**
+             * HTTP connection pool settings.
+             */
+            http?: outputs.networking.v1alpha3.SidecarSpecIngressConnectionPoolHttp;
+            /**
+             * Settings common to both HTTP and TCP upstream connections.
+             */
+            tcp?: outputs.networking.v1alpha3.SidecarSpecIngressConnectionPoolTcp;
+        }
+
+        /**
+         * HTTP connection pool settings.
+         */
+        export interface SidecarSpecIngressConnectionPoolHttp {
+            /**
+             * Specify if http1.1 connection should be upgraded to http2 for the associated destination.
+             */
+            h2UpgradePolicy?: string;
+            /**
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
+             */
+            http1MaxPendingRequests?: number;
+            /**
+             * Maximum number of active requests to a destination.
+             */
+            http2MaxRequests?: number;
+            /**
+             * The idle timeout for upstream connection pool connections.
+             */
+            idleTimeout?: string;
+            /**
+             * Maximum number of requests per connection to a backend.
+             */
+            maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
+            maxRetries?: number;
+            /**
+             * If set to true, client protocol will be preserved while initiating connection to backend.
+             */
+            useClientProtocol?: boolean;
+        }
+
+        /**
+         * Settings common to both HTTP and TCP upstream connections.
+         */
+        export interface SidecarSpecIngressConnectionPoolTcp {
+            /**
+             * TCP connection timeout.
+             */
+            connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
+            /**
+             * Maximum number of HTTP1 /TCP connections to a destination host.
+             */
+            maxConnections?: number;
+            /**
+             * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+             */
+            tcpKeepalive?: outputs.networking.v1alpha3.SidecarSpecIngressConnectionPoolTcpTcpKeepalive;
+        }
+
+        /**
+         * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+         */
+        export interface SidecarSpecIngressConnectionPoolTcpTcpKeepalive {
+            /**
+             * The time duration between keep-alive probes.
+             */
+            interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
+            probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
+            time?: string;
         }
 
         /**
@@ -879,6 +1511,60 @@ export namespace networking {
         }
 
         /**
+         * Set of TLS related options that will enable TLS termination on the sidecar for requests originating from outside the mesh.
+         */
+        export interface SidecarSpecIngressTls {
+            /**
+             * REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.
+             */
+            caCertificates?: string;
+            /**
+             * Optional: If specified, only support the specified cipher list.
+             */
+            cipherSuites?: string[];
+            /**
+             * For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.
+             */
+            credentialName?: string;
+            /**
+             * If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.
+             */
+            httpsRedirect?: boolean;
+            /**
+             * Optional: Maximum TLS protocol version.
+             */
+            maxProtocolVersion?: string;
+            /**
+             * Optional: Minimum TLS protocol version.
+             */
+            minProtocolVersion?: string;
+            /**
+             * Optional: Indicates whether connections to this port should be secured using TLS.
+             */
+            mode?: string;
+            /**
+             * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
+             */
+            privateKey?: string;
+            /**
+             * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
+             */
+            serverCertificate?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate presented by the client.
+             */
+            subjectAltNames?: string[];
+            /**
+             * An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.
+             */
+            verifyCertificateHash?: string[];
+            /**
+             * An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.
+             */
+            verifyCertificateSpki?: string[];
+        }
+
+        /**
          * Configuration for the outbound traffic policy.
          */
         export interface SidecarSpecOutboundTrafficPolicy {
@@ -890,7 +1576,7 @@ export namespace networking {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -908,8 +1594,14 @@ export namespace networking {
             number?: number;
         }
 
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this `Sidecar` configuration should be applied.
+         */
         export interface SidecarSpecWorkloadSelector {
-            labels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.
+             */
+            labels?: {[key: string]: string};
         }
 
         /**
@@ -936,6 +1628,9 @@ export namespace networking {
              * An ordered list of route rules for opaque TCP traffic.
              */
             tcp?: outputs.networking.v1alpha3.VirtualServiceSpecTcp[];
+            /**
+             * An ordered list of route rule for non-terminated TLS & HTTPS traffic.
+             */
             tls?: outputs.networking.v1alpha3.VirtualServiceSpecTls[];
         }
 
@@ -944,34 +1639,45 @@ export namespace networking {
              * Cross-Origin Resource Sharing policy (CORS).
              */
             corsPolicy?: outputs.networking.v1alpha3.VirtualServiceSpecHttpCorsPolicy;
+            /**
+             * Delegate is used to specify the particular VirtualService which can be used to define delegate HTTPRoute.
+             */
             delegate?: outputs.networking.v1alpha3.VirtualServiceSpecHttpDelegate;
+            /**
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
+             */
+            directResponse?: outputs.networking.v1alpha3.VirtualServiceSpecHttpDirectResponse;
             /**
              * Fault injection policy to apply on HTTP traffic at the client side.
              */
             fault?: outputs.networking.v1alpha3.VirtualServiceSpecHttpFault;
             headers?: outputs.networking.v1alpha3.VirtualServiceSpecHttpHeaders;
-            match?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMatch[];
-            mirror?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirror;
             /**
-             * Percentage of the traffic to be mirrored by the `mirror` field.
+             * Match conditions to be satisfied for the rule to be activated.
              */
+            match?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMatch[];
+            /**
+             * Mirror HTTP traffic to a another destination in addition to forwarding the requests to the intended destination.
+             */
+            mirror?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirror;
             mirrorPercent?: number;
             /**
              * Percentage of the traffic to be mirrored by the `mirror` field.
              */
             mirrorPercentage?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirrorPercentage;
-            /**
-             * Percentage of the traffic to be mirrored by the `mirror` field.
-             */
             mirror_percent?: number;
+            /**
+             * Specifies the destinations to mirror HTTP traffic in addition to the original destination.
+             */
+            mirrors?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirrors[];
             /**
              * The name assigned to the route for debugging purposes.
              */
             name?: string;
             /**
-             * A HTTP rule can either redirect or forward (default) traffic.
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
              */
-            redirect?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRedirect;
+            redirect?: any;
             /**
              * Retry policy for HTTP requests.
              */
@@ -981,7 +1687,7 @@ export namespace networking {
              */
             rewrite?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRewrite;
             /**
-             * A HTTP rule can either redirect or forward (default) traffic.
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
              */
             route?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRoute[];
             /**
@@ -994,24 +1700,36 @@ export namespace networking {
          * Cross-Origin Resource Sharing policy (CORS).
          */
         export interface VirtualServiceSpecHttpCorsPolicy {
+            /**
+             * Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials.
+             */
             allowCredentials?: boolean;
+            /**
+             * List of HTTP headers that can be used when requesting the resource.
+             */
             allowHeaders?: string[];
             /**
              * List of HTTP methods allowed to access the resource.
              */
             allowMethods?: string[];
-            /**
-             * The list of origins that are allowed to perform CORS requests.
-             */
             allowOrigin?: string[];
             /**
              * String patterns that match allowed origins.
              */
             allowOrigins?: any[];
+            /**
+             * A list of HTTP headers that the browsers are allowed to access.
+             */
             exposeHeaders?: string[];
+            /**
+             * Specifies how long the results of a preflight request can be cached.
+             */
             maxAge?: string;
         }
 
+        /**
+         * Delegate is used to specify the particular VirtualService which can be used to define delegate HTTPRoute.
+         */
         export interface VirtualServiceSpecHttpDelegate {
             /**
              * Name specifies the name of the delegate VirtualService.
@@ -1024,10 +1742,30 @@ export namespace networking {
         }
 
         /**
+         * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
+         */
+        export interface VirtualServiceSpecHttpDirectResponse {
+            /**
+             * Specifies the content of the response body.
+             */
+            body?: any;
+            /**
+             * Specifies the HTTP response status to be returned.
+             */
+            status: number;
+        }
+
+        /**
          * Fault injection policy to apply on HTTP traffic at the client side.
          */
         export interface VirtualServiceSpecHttpFault {
+            /**
+             * Abort Http request attempts and return error codes back to downstream service, giving the impression that the upstream service is faulty.
+             */
             abort?: any;
+            /**
+             * Delay requests before forwarding, emulating various failures such as network issues, overloaded upstream service, etc.
+             */
             delay?: any;
         }
 
@@ -1037,28 +1775,37 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequest {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpHeadersResponse {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpMatch {
+            /**
+             * HTTP Authority values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             authority?: any;
             /**
              * Names of gateways where the rule should be applied.
              */
             gateways?: string[];
-            headers?: { [key: string]: any };
+            /**
+             * The header keys must be lowercase and use hyphen as the separator, e.g.
+             */
+            headers?: {[key: string]: any};
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
             ignoreUriCase?: boolean;
+            /**
+             * HTTP Method values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             method?: any;
             /**
              * The name assigned to a match.
@@ -1071,25 +1818,41 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: { [key: string]: any };
+            queryParams?: {[key: string]: any};
+            /**
+             * URI Scheme values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             scheme?: any;
-            sourceLabels?: { [key: string]: string };
+            /**
+             * One or more labels that constrain the applicability of a rule to source (client) workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
             sourceNamespace?: string;
+            /**
+             * The human readable prefix to use when emitting statistics for this route.
+             */
+            statPrefix?: string;
+            /**
+             * URI to match values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             uri?: any;
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: { [key: string]: any };
+            withoutHeaders?: {[key: string]: any};
         }
 
+        /**
+         * Mirror HTTP traffic to a another destination in addition to forwarding the requests to the intended destination.
+         */
         export interface VirtualServiceSpecHttpMirror {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -1114,13 +1877,47 @@ export namespace networking {
             number?: number;
         }
 
+        export interface VirtualServiceSpecHttpMirrors {
+            /**
+             * Destination specifies the target of the mirror operation.
+             */
+            destination: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirrorsDestination;
+            /**
+             * Percentage of the traffic to be mirrored by the `destination` field.
+             */
+            percentage?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirrorsPercentage;
+        }
+
         /**
-         * A HTTP rule can either redirect or forward (default) traffic.
+         * Destination specifies the target of the mirror operation.
          */
-        export interface VirtualServiceSpecHttpRedirect {
-            authority?: string;
-            redirectCode?: number;
-            uri?: string;
+        export interface VirtualServiceSpecHttpMirrorsDestination {
+            /**
+             * The name of a service from the service registry.
+             */
+            host: string;
+            /**
+             * Specifies the port on the host that is being addressed.
+             */
+            port?: outputs.networking.v1alpha3.VirtualServiceSpecHttpMirrorsDestinationPort;
+            /**
+             * The name of a subset within the service.
+             */
+            subset?: string;
+        }
+
+        /**
+         * Specifies the port on the host that is being addressed.
+         */
+        export interface VirtualServiceSpecHttpMirrorsDestinationPort {
+            number?: number;
+        }
+
+        /**
+         * Percentage of the traffic to be mirrored by the `destination` field.
+         */
+        export interface VirtualServiceSpecHttpMirrorsPercentage {
+            value?: number;
         }
 
         /**
@@ -1153,20 +1950,50 @@ export namespace networking {
              * rewrite the Authority/Host header with this value.
              */
             authority?: string;
+            /**
+             * rewrite the path (or the prefix) portion of the URI with this value.
+             */
             uri?: string;
+            /**
+             * rewrite the path portion of the URI with the specified regex.
+             */
+            uriRegexRewrite?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRewriteUriRegexRewrite;
+        }
+
+        /**
+         * rewrite the path portion of the URI with the specified regex.
+         */
+        export interface VirtualServiceSpecHttpRewriteUriRegexRewrite {
+            /**
+             * RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
+            match?: string;
+            /**
+             * The string that should replace into matching portions of original URI.
+             */
+            rewrite?: string;
         }
 
         export interface VirtualServiceSpecHttpRoute {
-            destination?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1alpha3.VirtualServiceSpecHttpRouteDestination;
             headers?: outputs.networking.v1alpha3.VirtualServiceSpecHttpRouteHeaders;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecHttpRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -1190,18 +2017,21 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequest {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponse {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecTcp {
+            /**
+             * Match conditions to be satisfied for the rule to be activated.
+             */
             match?: outputs.networking.v1alpha3.VirtualServiceSpecTcpMatch[];
             /**
              * The destination to which the connection should be forwarded to.
@@ -1222,27 +2052,36 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: number;
-            sourceLabels?: { [key: string]: string };
+            /**
+             * One or more labels that constrain the applicability of a rule to workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
             sourceNamespace?: string;
-            /**
-             * IPv4 or IPv6 ip address of source with optional subnet.
-             */
             sourceSubnet?: string;
         }
 
         export interface VirtualServiceSpecTcpRoute {
-            destination?: outputs.networking.v1alpha3.VirtualServiceSpecTcpRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1alpha3.VirtualServiceSpecTcpRouteDestination;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecTcpRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -1261,7 +2100,10 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecTls {
-            match?: outputs.networking.v1alpha3.VirtualServiceSpecTlsMatch[];
+            /**
+             * Match conditions to be satisfied for the rule to be activated.
+             */
+            match: outputs.networking.v1alpha3.VirtualServiceSpecTlsMatch[];
             /**
              * The destination to which the connection should be forwarded to.
              */
@@ -1284,8 +2126,11 @@ export namespace networking {
             /**
              * SNI (server name indicator) to match on.
              */
-            sniHosts?: string[];
-            sourceLabels?: { [key: string]: string };
+            sniHosts: string[];
+            /**
+             * One or more labels that constrain the applicability of a rule to workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -1293,15 +2138,24 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecTlsRoute {
-            destination?: outputs.networking.v1alpha3.VirtualServiceSpecTlsRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1alpha3.VirtualServiceSpecTlsRouteDestination;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecTlsRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -1323,20 +2177,29 @@ export namespace networking {
          * Configuration affecting VMs onboarded into the mesh. See more details at: https://istio.io/docs/reference/config/networking/workload-entry.html
          */
         export interface WorkloadEntrySpec {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
             address?: string;
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: { [key: string]: string };
+            labels?: {[key: string]: string};
             /**
              * The locality associated with the endpoint.
              */
             locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
             network?: string;
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: { [key: string]: number };
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1359,35 +2222,44 @@ export namespace networking {
             /**
              * Template to be used for the generation of `WorkloadEntry` resources that belong to this `WorkloadGroup`.
              */
-            template?: outputs.networking.v1alpha3.WorkloadGroupSpecTemplate;
+            template: outputs.networking.v1alpha3.WorkloadGroupSpecTemplate;
         }
 
         /**
          * Metadata that will be used for all corresponding `WorkloadEntries`.
          */
         export interface WorkloadGroupSpecMetadata {
-            annotations?: { [key: string]: string };
-            labels?: { [key: string]: string };
+            annotations?: {[key: string]: string};
+            labels?: {[key: string]: string};
         }
 
         /**
          * Template to be used for the generation of `WorkloadEntry` resources that belong to this `WorkloadGroup`.
          */
         export interface WorkloadGroupSpecTemplate {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
             address?: string;
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: { [key: string]: string };
+            labels?: {[key: string]: string};
             /**
              * The locality associated with the endpoint.
              */
             locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
             network?: string;
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: { [key: string]: number };
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -1409,17 +2281,30 @@ export namespace networking {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
+            /**
+             * One or more named sets that represent individual versions of a service.
+             */
             subsets?: outputs.networking.v1beta1.DestinationRuleSpecSubsets[];
+            /**
+             * Traffic policies to apply (load balancing policy, connection pool sizes, outlier detection).
+             */
             trafficPolicy?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicy;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this `DestinationRule` configuration should be applied.
+             */
+            workloadSelector?: outputs.networking.v1beta1.DestinationRuleSpecWorkloadSelector;
         }
 
         export interface DestinationRuleSpecSubsets {
-            labels?: { [key: string]: string };
+            /**
+             * Labels apply a filter over the endpoints of a service in the service registry.
+             */
+            labels?: {[key: string]: string};
             /**
              * Name of the subset.
              */
-            name?: string;
+            name: string;
             /**
              * Traffic policies that apply to this subset.
              */
@@ -1444,6 +2329,10 @@ export namespace networking {
              * TLS related settings for connections to the upstream service.
              */
             tls?: outputs.networking.v1beta1.DestinationRuleSpecSubsetsTrafficPolicyTls;
+            /**
+             * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+             */
+            tunnel?: outputs.networking.v1beta1.DestinationRuleSpecSubsetsTrafficPolicyTunnel;
         }
 
         export interface DestinationRuleSpecSubsetsTrafficPolicyConnectionPool {
@@ -1466,11 +2355,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -1481,6 +2370,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -1496,6 +2388,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -1514,7 +2410,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -1532,12 +2434,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -1552,6 +2463,9 @@ export namespace networking {
              */
             loadBalancer?: any;
             outlierDetection?: outputs.networking.v1beta1.DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsOutlierDetection;
+            /**
+             * Specifies the number of a port on the destination service on which this policy is being applied.
+             */
             port?: outputs.networking.v1beta1.DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsPort;
             /**
              * TLS related settings for connections to the upstream service.
@@ -1579,11 +2493,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -1594,6 +2508,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -1609,6 +2526,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -1627,7 +2548,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -1645,12 +2572,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -1658,6 +2594,9 @@ export namespace networking {
             splitExternalLocalOriginErrors?: boolean;
         }
 
+        /**
+         * Specifies the number of a port on the destination service on which this policy is being applied.
+         */
         export interface DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsPort {
             number?: number;
         }
@@ -1666,12 +2605,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecSubsetsTrafficPolicyPortLevelSettingsTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -1681,6 +2633,9 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
@@ -1688,12 +2643,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecSubsetsTrafficPolicyTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -1703,9 +2671,33 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
+        /**
+         * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+         */
+        export interface DestinationRuleSpecSubsetsTrafficPolicyTunnel {
+            /**
+             * Specifies which protocol to use for tunneling the downstream connection.
+             */
+            protocol?: string;
+            /**
+             * Specifies a host to which the downstream connection is tunneled.
+             */
+            targetHost: string;
+            /**
+             * Specifies a port to which the downstream connection is tunneled.
+             */
+            targetPort: number;
+        }
+
+        /**
+         * Traffic policies to apply (load balancing policy, connection pool sizes, outlier detection).
+         */
         export interface DestinationRuleSpecTrafficPolicy {
             connectionPool?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicyConnectionPool;
             /**
@@ -1721,6 +2713,10 @@ export namespace networking {
              * TLS related settings for connections to the upstream service.
              */
             tls?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicyTls;
+            /**
+             * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+             */
+            tunnel?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicyTunnel;
         }
 
         export interface DestinationRuleSpecTrafficPolicyConnectionPool {
@@ -1743,11 +2739,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -1758,6 +2754,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -1773,6 +2772,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -1791,7 +2794,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -1809,12 +2818,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -1829,6 +2847,9 @@ export namespace networking {
              */
             loadBalancer?: any;
             outlierDetection?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicyPortLevelSettingsOutlierDetection;
+            /**
+             * Specifies the number of a port on the destination service on which this policy is being applied.
+             */
             port?: outputs.networking.v1beta1.DestinationRuleSpecTrafficPolicyPortLevelSettingsPort;
             /**
              * TLS related settings for connections to the upstream service.
@@ -1856,11 +2877,11 @@ export namespace networking {
              */
             h2UpgradePolicy?: string;
             /**
-             * Maximum number of pending HTTP requests to a destination.
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
              */
             http1MaxPendingRequests?: number;
             /**
-             * Maximum number of requests to a backend.
+             * Maximum number of active requests to a destination.
              */
             http2MaxRequests?: number;
             /**
@@ -1871,6 +2892,9 @@ export namespace networking {
              * Maximum number of requests per connection to a backend.
              */
             maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
             maxRetries?: number;
             /**
              * If set to true, client protocol will be preserved while initiating connection to backend.
@@ -1886,6 +2910,10 @@ export namespace networking {
              * TCP connection timeout.
              */
             connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
             /**
              * Maximum number of HTTP1 /TCP connections to a destination host.
              */
@@ -1904,7 +2932,13 @@ export namespace networking {
              * The time duration between keep-alive probes.
              */
             interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
             probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
             time?: string;
         }
 
@@ -1922,12 +2956,21 @@ export namespace networking {
              * Number of gateway errors before a host is ejected from the connection pool.
              */
             consecutiveGatewayErrors?: number;
+            /**
+             * The number of consecutive locally originated failures before ejection occurs.
+             */
             consecutiveLocalOriginFailures?: number;
             /**
              * Time interval between ejection sweep analysis.
              */
             interval?: string;
+            /**
+             * Maximum % of hosts in the load balancing pool for the upstream service that can be ejected.
+             */
             maxEjectionPercent?: number;
+            /**
+             * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent hosts in healthy mode.
+             */
             minHealthPercent?: number;
             /**
              * Determines whether to distinguish local origin failures from external errors.
@@ -1935,6 +2978,9 @@ export namespace networking {
             splitExternalLocalOriginErrors?: boolean;
         }
 
+        /**
+         * Specifies the number of a port on the destination service on which this policy is being applied.
+         */
         export interface DestinationRuleSpecTrafficPolicyPortLevelSettingsPort {
             number?: number;
         }
@@ -1943,12 +2989,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecTrafficPolicyPortLevelSettingsTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -1958,6 +3017,9 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
         }
 
@@ -1965,12 +3027,25 @@ export namespace networking {
          * TLS related settings for connections to the upstream service.
          */
         export interface DestinationRuleSpecTrafficPolicyTls {
+            /**
+             * OPTIONAL: The path to the file containing certificate authority certificates to use in verifying a presented server certificate.
+             */
             caCertificates?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
              */
             clientCertificate?: string;
+            /**
+             * The name of the secret that holds the TLS certs for the client including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * InsecureSkipVerify specifies whether the proxy should skip verifying the CA signature and SAN for the server certificate corresponding to the host.
+             */
+            insecureSkipVerify?: boolean;
+            /**
+             * Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `MUTUAL`.
@@ -1980,14 +3055,48 @@ export namespace networking {
              * SNI string to present to the server during TLS handshake.
              */
             sni?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate.
+             */
             subjectAltNames?: string[];
+        }
+
+        /**
+         * Configuration of tunneling TCP over other transport or application layers for the host configured in the DestinationRule.
+         */
+        export interface DestinationRuleSpecTrafficPolicyTunnel {
+            /**
+             * Specifies which protocol to use for tunneling the downstream connection.
+             */
+            protocol?: string;
+            /**
+             * Specifies a host to which the downstream connection is tunneled.
+             */
+            targetHost: string;
+            /**
+             * Specifies a port to which the downstream connection is tunneled.
+             */
+            targetPort: number;
+        }
+
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this `DestinationRule` configuration should be applied.
+         */
+        export interface DestinationRuleSpecWorkloadSelector {
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
         }
 
         /**
          * Configuration affecting edge load balancer. See more details at: https://istio.io/docs/reference/config/networking/gateway.html
          */
         export interface GatewaySpec {
-            selector?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which this gateway configuration should be applied.
+             */
+            selector?: {[key: string]: string};
             /**
              * A list of server specifications.
              */
@@ -1995,36 +3104,45 @@ export namespace networking {
         }
 
         export interface GatewaySpecServers {
+            /**
+             * The ip or the Unix domain socket to which the listener should be bound to.
+             */
             bind?: string;
             defaultEndpoint?: string;
             /**
              * One or more hosts exposed by this gateway.
              */
-            hosts?: string[];
+            hosts: string[];
             /**
              * An optional name of the server, when set must be unique across all servers.
              */
             name?: string;
-            port?: outputs.networking.v1beta1.GatewaySpecServersPort;
+            /**
+             * The Port on which the proxy should listen for incoming connections.
+             */
+            port: outputs.networking.v1beta1.GatewaySpecServersPort;
             /**
              * Set of TLS related options that govern the server's behavior.
              */
             tls?: outputs.networking.v1beta1.GatewaySpecServersTls;
         }
 
+        /**
+         * The Port on which the proxy should listen for incoming connections.
+         */
         export interface GatewaySpecServersPort {
             /**
              * Label assigned to the port.
              */
-            name?: string;
+            name: string;
             /**
              * A valid non-negative integer port number.
              */
-            number?: number;
+            number: number;
             /**
              * The protocol exposed on the port.
              */
-            protocol?: string;
+            protocol: string;
             targetPort?: number;
         }
 
@@ -2033,14 +3151,20 @@ export namespace networking {
          */
         export interface GatewaySpecServersTls {
             /**
-             * REQUIRED if mode is `MUTUAL`.
+             * REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.
              */
             caCertificates?: string;
             /**
              * Optional: If specified, only support the specified cipher list.
              */
             cipherSuites?: string[];
+            /**
+             * For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.
+             */
             credentialName?: string;
+            /**
+             * If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.
+             */
             httpsRedirect?: boolean;
             /**
              * Optional: Maximum TLS protocol version.
@@ -2050,6 +3174,9 @@ export namespace networking {
              * Optional: Minimum TLS protocol version.
              */
             minProtocolVersion?: string;
+            /**
+             * Optional: Indicates whether connections to this port should be secured using TLS.
+             */
             mode?: string;
             /**
              * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
@@ -2059,9 +3186,60 @@ export namespace networking {
              * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
              */
             serverCertificate?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate presented by the client.
+             */
             subjectAltNames?: string[];
+            /**
+             * An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.
+             */
             verifyCertificateHash?: string[];
+            /**
+             * An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.
+             */
             verifyCertificateSpki?: string[];
+        }
+
+        /**
+         * Provides configuration for individual workloads. See more details at: https://istio.io/docs/reference/config/networking/proxy-config.html
+         */
+        export interface ProxyConfigSpec {
+            /**
+             * The number of worker threads to run.
+             */
+            concurrency?: number;
+            /**
+             * Additional environment variables for the proxy.
+             */
+            environmentVariables?: {[key: string]: string};
+            /**
+             * Specifies the details of the proxy image.
+             */
+            image?: outputs.networking.v1beta1.ProxyConfigSpecImage;
+            /**
+             * Optional.
+             */
+            selector?: outputs.networking.v1beta1.ProxyConfigSpecSelector;
+        }
+
+        /**
+         * Specifies the details of the proxy image.
+         */
+        export interface ProxyConfigSpecImage {
+            /**
+             * The image type of the image.
+             */
+            imageType?: string;
+        }
+
+        /**
+         * Optional.
+         */
+        export interface ProxyConfigSpecSelector {
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
         }
 
         /**
@@ -2083,16 +3261,22 @@ export namespace networking {
             /**
              * The hosts associated with the ServiceEntry.
              */
-            hosts?: string[];
+            hosts: string[];
+            /**
+             * Specify whether the service should be considered external to the mesh or part of the mesh.
+             */
             location?: string;
             /**
              * The ports associated with the external service.
              */
             ports?: outputs.networking.v1beta1.ServiceEntrySpecPorts[];
             /**
-             * Service discovery mode for the hosts.
+             * Service resolution mode for the hosts.
              */
             resolution?: string;
+            /**
+             * If specified, the proxy will verify that the server certificate's subject alternate name matches one of the specified values.
+             */
             subjectAltNames?: string[];
             /**
              * Applicable only for MESH_INTERNAL services.
@@ -2101,20 +3285,29 @@ export namespace networking {
         }
 
         export interface ServiceEntrySpecEndpoints {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
             address?: string;
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: { [key: string]: string };
+            labels?: {[key: string]: string};
             /**
              * The locality associated with the endpoint.
              */
             locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
             network?: string;
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: { [key: string]: number };
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2126,15 +3319,18 @@ export namespace networking {
             /**
              * Label assigned to the port.
              */
-            name?: string;
+            name: string;
             /**
              * A valid non-negative integer port number.
              */
-            number?: number;
+            number: number;
             /**
              * The protocol exposed on the port.
              */
             protocol?: string;
+            /**
+             * The port number on the endpoint where the traffic will be received.
+             */
             targetPort?: number;
         }
 
@@ -2142,26 +3338,51 @@ export namespace networking {
          * Applicable only for MESH_INTERNAL services.
          */
         export interface ServiceEntrySpecWorkloadSelector {
-            labels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.
+             */
+            labels?: {[key: string]: string};
         }
 
         /**
          * Configuration affecting network reachability of a sidecar. See more details at: https://istio.io/docs/reference/config/networking/sidecar.html
          */
         export interface SidecarSpec {
+            /**
+             * Egress specifies the configuration of the sidecar for processing outbound traffic from the attached workload instance to other services in the mesh.
+             */
             egress?: outputs.networking.v1beta1.SidecarSpecEgress[];
+            /**
+             * Settings controlling the volume of connections Envoy will accept from the network.
+             */
+            inboundConnectionPool?: outputs.networking.v1beta1.SidecarSpecInboundConnectionPool;
+            /**
+             * Ingress specifies the configuration of the sidecar for processing inbound traffic to the attached workload instance.
+             */
             ingress?: outputs.networking.v1beta1.SidecarSpecIngress[];
             /**
              * Configuration for the outbound traffic policy.
              */
             outboundTrafficPolicy?: outputs.networking.v1beta1.SidecarSpecOutboundTrafficPolicy;
+            /**
+             * Criteria used to select the specific set of pods/VMs on which this `Sidecar` configuration should be applied.
+             */
             workloadSelector?: outputs.networking.v1beta1.SidecarSpecWorkloadSelector;
         }
 
         export interface SidecarSpecEgress {
+            /**
+             * The IP(IPv4 or IPv6) or the Unix domain socket to which the listener should be bound to.
+             */
             bind?: string;
+            /**
+             * When the bind address is an IP, the captureMode option dictates how traffic to the listener is expected to be captured (or not).
+             */
             captureMode?: string;
-            hosts?: string[];
+            /**
+             * One or more service hosts exposed by the listener in `namespace/dnsName` format.
+             */
+            hosts: string[];
             /**
              * The port associated with the listener.
              */
@@ -2187,17 +3408,207 @@ export namespace networking {
             targetPort?: number;
         }
 
+        /**
+         * Settings controlling the volume of connections Envoy will accept from the network.
+         */
+        export interface SidecarSpecInboundConnectionPool {
+            /**
+             * HTTP connection pool settings.
+             */
+            http?: outputs.networking.v1beta1.SidecarSpecInboundConnectionPoolHttp;
+            /**
+             * Settings common to both HTTP and TCP upstream connections.
+             */
+            tcp?: outputs.networking.v1beta1.SidecarSpecInboundConnectionPoolTcp;
+        }
+
+        /**
+         * HTTP connection pool settings.
+         */
+        export interface SidecarSpecInboundConnectionPoolHttp {
+            /**
+             * Specify if http1.1 connection should be upgraded to http2 for the associated destination.
+             */
+            h2UpgradePolicy?: string;
+            /**
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
+             */
+            http1MaxPendingRequests?: number;
+            /**
+             * Maximum number of active requests to a destination.
+             */
+            http2MaxRequests?: number;
+            /**
+             * The idle timeout for upstream connection pool connections.
+             */
+            idleTimeout?: string;
+            /**
+             * Maximum number of requests per connection to a backend.
+             */
+            maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
+            maxRetries?: number;
+            /**
+             * If set to true, client protocol will be preserved while initiating connection to backend.
+             */
+            useClientProtocol?: boolean;
+        }
+
+        /**
+         * Settings common to both HTTP and TCP upstream connections.
+         */
+        export interface SidecarSpecInboundConnectionPoolTcp {
+            /**
+             * TCP connection timeout.
+             */
+            connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
+            /**
+             * Maximum number of HTTP1 /TCP connections to a destination host.
+             */
+            maxConnections?: number;
+            /**
+             * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+             */
+            tcpKeepalive?: outputs.networking.v1beta1.SidecarSpecInboundConnectionPoolTcpTcpKeepalive;
+        }
+
+        /**
+         * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+         */
+        export interface SidecarSpecInboundConnectionPoolTcpTcpKeepalive {
+            /**
+             * The time duration between keep-alive probes.
+             */
+            interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
+            probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
+            time?: string;
+        }
+
         export interface SidecarSpecIngress {
             /**
-             * The IP to which the listener should be bound.
+             * The IP(IPv4 or IPv6) to which the listener should be bound.
              */
             bind?: string;
+            /**
+             * The captureMode option dictates how traffic to the listener is expected to be captured (or not).
+             */
             captureMode?: string;
+            /**
+             * Settings controlling the volume of connections Envoy will accept from the network.
+             */
+            connectionPool?: outputs.networking.v1beta1.SidecarSpecIngressConnectionPool;
+            /**
+             * The IP endpoint or Unix domain socket to which traffic should be forwarded to.
+             */
             defaultEndpoint?: string;
             /**
              * The port associated with the listener.
              */
-            port?: outputs.networking.v1beta1.SidecarSpecIngressPort;
+            port: outputs.networking.v1beta1.SidecarSpecIngressPort;
+            /**
+             * Set of TLS related options that will enable TLS termination on the sidecar for requests originating from outside the mesh.
+             */
+            tls?: outputs.networking.v1beta1.SidecarSpecIngressTls;
+        }
+
+        /**
+         * Settings controlling the volume of connections Envoy will accept from the network.
+         */
+        export interface SidecarSpecIngressConnectionPool {
+            /**
+             * HTTP connection pool settings.
+             */
+            http?: outputs.networking.v1beta1.SidecarSpecIngressConnectionPoolHttp;
+            /**
+             * Settings common to both HTTP and TCP upstream connections.
+             */
+            tcp?: outputs.networking.v1beta1.SidecarSpecIngressConnectionPoolTcp;
+        }
+
+        /**
+         * HTTP connection pool settings.
+         */
+        export interface SidecarSpecIngressConnectionPoolHttp {
+            /**
+             * Specify if http1.1 connection should be upgraded to http2 for the associated destination.
+             */
+            h2UpgradePolicy?: string;
+            /**
+             * Maximum number of requests that will be queued while waiting for a ready connection pool connection.
+             */
+            http1MaxPendingRequests?: number;
+            /**
+             * Maximum number of active requests to a destination.
+             */
+            http2MaxRequests?: number;
+            /**
+             * The idle timeout for upstream connection pool connections.
+             */
+            idleTimeout?: string;
+            /**
+             * Maximum number of requests per connection to a backend.
+             */
+            maxRequestsPerConnection?: number;
+            /**
+             * Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.
+             */
+            maxRetries?: number;
+            /**
+             * If set to true, client protocol will be preserved while initiating connection to backend.
+             */
+            useClientProtocol?: boolean;
+        }
+
+        /**
+         * Settings common to both HTTP and TCP upstream connections.
+         */
+        export interface SidecarSpecIngressConnectionPoolTcp {
+            /**
+             * TCP connection timeout.
+             */
+            connectTimeout?: string;
+            /**
+             * The maximum duration of a connection.
+             */
+            maxConnectionDuration?: string;
+            /**
+             * Maximum number of HTTP1 /TCP connections to a destination host.
+             */
+            maxConnections?: number;
+            /**
+             * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+             */
+            tcpKeepalive?: outputs.networking.v1beta1.SidecarSpecIngressConnectionPoolTcpTcpKeepalive;
+        }
+
+        /**
+         * If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.
+         */
+        export interface SidecarSpecIngressConnectionPoolTcpTcpKeepalive {
+            /**
+             * The time duration between keep-alive probes.
+             */
+            interval?: string;
+            /**
+             * Maximum number of keepalive probes to send without response before deciding the connection is dead.
+             */
+            probes?: number;
+            /**
+             * The time duration a connection needs to be idle before keep-alive probes start being sent.
+             */
+            time?: string;
         }
 
         /**
@@ -2220,6 +3631,60 @@ export namespace networking {
         }
 
         /**
+         * Set of TLS related options that will enable TLS termination on the sidecar for requests originating from outside the mesh.
+         */
+        export interface SidecarSpecIngressTls {
+            /**
+             * REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.
+             */
+            caCertificates?: string;
+            /**
+             * Optional: If specified, only support the specified cipher list.
+             */
+            cipherSuites?: string[];
+            /**
+             * For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.
+             */
+            credentialName?: string;
+            /**
+             * If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.
+             */
+            httpsRedirect?: boolean;
+            /**
+             * Optional: Maximum TLS protocol version.
+             */
+            maxProtocolVersion?: string;
+            /**
+             * Optional: Minimum TLS protocol version.
+             */
+            minProtocolVersion?: string;
+            /**
+             * Optional: Indicates whether connections to this port should be secured using TLS.
+             */
+            mode?: string;
+            /**
+             * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
+             */
+            privateKey?: string;
+            /**
+             * REQUIRED if mode is `SIMPLE` or `MUTUAL`.
+             */
+            serverCertificate?: string;
+            /**
+             * A list of alternate names to verify the subject identity in the certificate presented by the client.
+             */
+            subjectAltNames?: string[];
+            /**
+             * An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.
+             */
+            verifyCertificateHash?: string[];
+            /**
+             * An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.
+             */
+            verifyCertificateSpki?: string[];
+        }
+
+        /**
          * Configuration for the outbound traffic policy.
          */
         export interface SidecarSpecOutboundTrafficPolicy {
@@ -2231,7 +3696,7 @@ export namespace networking {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -2249,8 +3714,14 @@ export namespace networking {
             number?: number;
         }
 
+        /**
+         * Criteria used to select the specific set of pods/VMs on which this `Sidecar` configuration should be applied.
+         */
         export interface SidecarSpecWorkloadSelector {
-            labels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.
+             */
+            labels?: {[key: string]: string};
         }
 
         /**
@@ -2277,6 +3748,9 @@ export namespace networking {
              * An ordered list of route rules for opaque TCP traffic.
              */
             tcp?: outputs.networking.v1beta1.VirtualServiceSpecTcp[];
+            /**
+             * An ordered list of route rule for non-terminated TLS & HTTPS traffic.
+             */
             tls?: outputs.networking.v1beta1.VirtualServiceSpecTls[];
         }
 
@@ -2285,34 +3759,45 @@ export namespace networking {
              * Cross-Origin Resource Sharing policy (CORS).
              */
             corsPolicy?: outputs.networking.v1beta1.VirtualServiceSpecHttpCorsPolicy;
+            /**
+             * Delegate is used to specify the particular VirtualService which can be used to define delegate HTTPRoute.
+             */
             delegate?: outputs.networking.v1beta1.VirtualServiceSpecHttpDelegate;
+            /**
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
+             */
+            directResponse?: outputs.networking.v1beta1.VirtualServiceSpecHttpDirectResponse;
             /**
              * Fault injection policy to apply on HTTP traffic at the client side.
              */
             fault?: outputs.networking.v1beta1.VirtualServiceSpecHttpFault;
             headers?: outputs.networking.v1beta1.VirtualServiceSpecHttpHeaders;
-            match?: outputs.networking.v1beta1.VirtualServiceSpecHttpMatch[];
-            mirror?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirror;
             /**
-             * Percentage of the traffic to be mirrored by the `mirror` field.
+             * Match conditions to be satisfied for the rule to be activated.
              */
+            match?: outputs.networking.v1beta1.VirtualServiceSpecHttpMatch[];
+            /**
+             * Mirror HTTP traffic to a another destination in addition to forwarding the requests to the intended destination.
+             */
+            mirror?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirror;
             mirrorPercent?: number;
             /**
              * Percentage of the traffic to be mirrored by the `mirror` field.
              */
             mirrorPercentage?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirrorPercentage;
-            /**
-             * Percentage of the traffic to be mirrored by the `mirror` field.
-             */
             mirror_percent?: number;
+            /**
+             * Specifies the destinations to mirror HTTP traffic in addition to the original destination.
+             */
+            mirrors?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirrors[];
             /**
              * The name assigned to the route for debugging purposes.
              */
             name?: string;
             /**
-             * A HTTP rule can either redirect or forward (default) traffic.
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
              */
-            redirect?: outputs.networking.v1beta1.VirtualServiceSpecHttpRedirect;
+            redirect?: any;
             /**
              * Retry policy for HTTP requests.
              */
@@ -2322,7 +3807,7 @@ export namespace networking {
              */
             rewrite?: outputs.networking.v1beta1.VirtualServiceSpecHttpRewrite;
             /**
-             * A HTTP rule can either redirect or forward (default) traffic.
+             * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
              */
             route?: outputs.networking.v1beta1.VirtualServiceSpecHttpRoute[];
             /**
@@ -2335,24 +3820,36 @@ export namespace networking {
          * Cross-Origin Resource Sharing policy (CORS).
          */
         export interface VirtualServiceSpecHttpCorsPolicy {
+            /**
+             * Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials.
+             */
             allowCredentials?: boolean;
+            /**
+             * List of HTTP headers that can be used when requesting the resource.
+             */
             allowHeaders?: string[];
             /**
              * List of HTTP methods allowed to access the resource.
              */
             allowMethods?: string[];
-            /**
-             * The list of origins that are allowed to perform CORS requests.
-             */
             allowOrigin?: string[];
             /**
              * String patterns that match allowed origins.
              */
             allowOrigins?: any[];
+            /**
+             * A list of HTTP headers that the browsers are allowed to access.
+             */
             exposeHeaders?: string[];
+            /**
+             * Specifies how long the results of a preflight request can be cached.
+             */
             maxAge?: string;
         }
 
+        /**
+         * Delegate is used to specify the particular VirtualService which can be used to define delegate HTTPRoute.
+         */
         export interface VirtualServiceSpecHttpDelegate {
             /**
              * Name specifies the name of the delegate VirtualService.
@@ -2365,10 +3862,30 @@ export namespace networking {
         }
 
         /**
+         * A HTTP rule can either return a direct_response, redirect or forward (default) traffic.
+         */
+        export interface VirtualServiceSpecHttpDirectResponse {
+            /**
+             * Specifies the content of the response body.
+             */
+            body?: any;
+            /**
+             * Specifies the HTTP response status to be returned.
+             */
+            status: number;
+        }
+
+        /**
          * Fault injection policy to apply on HTTP traffic at the client side.
          */
         export interface VirtualServiceSpecHttpFault {
+            /**
+             * Abort Http request attempts and return error codes back to downstream service, giving the impression that the upstream service is faulty.
+             */
             abort?: any;
+            /**
+             * Delay requests before forwarding, emulating various failures such as network issues, overloaded upstream service, etc.
+             */
             delay?: any;
         }
 
@@ -2378,28 +3895,37 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpHeadersRequest {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpHeadersResponse {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpMatch {
+            /**
+             * HTTP Authority values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             authority?: any;
             /**
              * Names of gateways where the rule should be applied.
              */
             gateways?: string[];
-            headers?: { [key: string]: any };
+            /**
+             * The header keys must be lowercase and use hyphen as the separator, e.g.
+             */
+            headers?: {[key: string]: any};
             /**
              * Flag to specify whether the URI matching should be case-insensitive.
              */
             ignoreUriCase?: boolean;
+            /**
+             * HTTP Method values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             method?: any;
             /**
              * The name assigned to a match.
@@ -2412,25 +3938,41 @@ export namespace networking {
             /**
              * Query parameters for matching.
              */
-            queryParams?: { [key: string]: any };
+            queryParams?: {[key: string]: any};
+            /**
+             * URI Scheme values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             scheme?: any;
-            sourceLabels?: { [key: string]: string };
+            /**
+             * One or more labels that constrain the applicability of a rule to source (client) workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
             sourceNamespace?: string;
+            /**
+             * The human readable prefix to use when emitting statistics for this route.
+             */
+            statPrefix?: string;
+            /**
+             * URI to match values are case-sensitive and formatted as follows: - `exact: "value"` for exact string match - `prefix: "value"` for prefix-based match - `regex: "value"` for RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
             uri?: any;
             /**
              * withoutHeader has the same syntax with the header, but has opposite meaning.
              */
-            withoutHeaders?: { [key: string]: any };
+            withoutHeaders?: {[key: string]: any};
         }
 
+        /**
+         * Mirror HTTP traffic to a another destination in addition to forwarding the requests to the intended destination.
+         */
         export interface VirtualServiceSpecHttpMirror {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -2455,13 +3997,47 @@ export namespace networking {
             number?: number;
         }
 
+        export interface VirtualServiceSpecHttpMirrors {
+            /**
+             * Destination specifies the target of the mirror operation.
+             */
+            destination: outputs.networking.v1beta1.VirtualServiceSpecHttpMirrorsDestination;
+            /**
+             * Percentage of the traffic to be mirrored by the `destination` field.
+             */
+            percentage?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirrorsPercentage;
+        }
+
         /**
-         * A HTTP rule can either redirect or forward (default) traffic.
+         * Destination specifies the target of the mirror operation.
          */
-        export interface VirtualServiceSpecHttpRedirect {
-            authority?: string;
-            redirectCode?: number;
-            uri?: string;
+        export interface VirtualServiceSpecHttpMirrorsDestination {
+            /**
+             * The name of a service from the service registry.
+             */
+            host: string;
+            /**
+             * Specifies the port on the host that is being addressed.
+             */
+            port?: outputs.networking.v1beta1.VirtualServiceSpecHttpMirrorsDestinationPort;
+            /**
+             * The name of a subset within the service.
+             */
+            subset?: string;
+        }
+
+        /**
+         * Specifies the port on the host that is being addressed.
+         */
+        export interface VirtualServiceSpecHttpMirrorsDestinationPort {
+            number?: number;
+        }
+
+        /**
+         * Percentage of the traffic to be mirrored by the `destination` field.
+         */
+        export interface VirtualServiceSpecHttpMirrorsPercentage {
+            value?: number;
         }
 
         /**
@@ -2494,20 +4070,50 @@ export namespace networking {
              * rewrite the Authority/Host header with this value.
              */
             authority?: string;
+            /**
+             * rewrite the path (or the prefix) portion of the URI with this value.
+             */
             uri?: string;
+            /**
+             * rewrite the path portion of the URI with the specified regex.
+             */
+            uriRegexRewrite?: outputs.networking.v1beta1.VirtualServiceSpecHttpRewriteUriRegexRewrite;
+        }
+
+        /**
+         * rewrite the path portion of the URI with the specified regex.
+         */
+        export interface VirtualServiceSpecHttpRewriteUriRegexRewrite {
+            /**
+             * RE2 style regex-based match (https://github.com/google/re2/wiki/Syntax).
+             */
+            match?: string;
+            /**
+             * The string that should replace into matching portions of original URI.
+             */
+            rewrite?: string;
         }
 
         export interface VirtualServiceSpecHttpRoute {
-            destination?: outputs.networking.v1beta1.VirtualServiceSpecHttpRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1beta1.VirtualServiceSpecHttpRouteDestination;
             headers?: outputs.networking.v1beta1.VirtualServiceSpecHttpRouteHeaders;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecHttpRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -2531,18 +4137,21 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersRequest {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecHttpRouteHeadersResponse {
-            add?: { [key: string]: string };
+            add?: {[key: string]: string};
             remove?: string[];
-            set?: { [key: string]: string };
+            set?: {[key: string]: string};
         }
 
         export interface VirtualServiceSpecTcp {
+            /**
+             * Match conditions to be satisfied for the rule to be activated.
+             */
             match?: outputs.networking.v1beta1.VirtualServiceSpecTcpMatch[];
             /**
              * The destination to which the connection should be forwarded to.
@@ -2563,27 +4172,36 @@ export namespace networking {
              * Specifies the port on the host that is being addressed.
              */
             port?: number;
-            sourceLabels?: { [key: string]: string };
+            /**
+             * One or more labels that constrain the applicability of a rule to workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
             sourceNamespace?: string;
-            /**
-             * IPv4 or IPv6 ip address of source with optional subnet.
-             */
             sourceSubnet?: string;
         }
 
         export interface VirtualServiceSpecTcpRoute {
-            destination?: outputs.networking.v1beta1.VirtualServiceSpecTcpRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1beta1.VirtualServiceSpecTcpRouteDestination;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecTcpRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -2602,7 +4220,10 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecTls {
-            match?: outputs.networking.v1beta1.VirtualServiceSpecTlsMatch[];
+            /**
+             * Match conditions to be satisfied for the rule to be activated.
+             */
+            match: outputs.networking.v1beta1.VirtualServiceSpecTlsMatch[];
             /**
              * The destination to which the connection should be forwarded to.
              */
@@ -2625,8 +4246,11 @@ export namespace networking {
             /**
              * SNI (server name indicator) to match on.
              */
-            sniHosts?: string[];
-            sourceLabels?: { [key: string]: string };
+            sniHosts: string[];
+            /**
+             * One or more labels that constrain the applicability of a rule to workloads with the given labels.
+             */
+            sourceLabels?: {[key: string]: string};
             /**
              * Source namespace constraining the applicability of a rule to workloads in that namespace.
              */
@@ -2634,15 +4258,24 @@ export namespace networking {
         }
 
         export interface VirtualServiceSpecTlsRoute {
-            destination?: outputs.networking.v1beta1.VirtualServiceSpecTlsRouteDestination;
+            /**
+             * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+             */
+            destination: outputs.networking.v1beta1.VirtualServiceSpecTlsRouteDestination;
+            /**
+             * Weight specifies the relative proportion of traffic to be forwarded to the destination.
+             */
             weight?: number;
         }
 
+        /**
+         * Destination uniquely identifies the instances of a service to which the request/connection should be forwarded to.
+         */
         export interface VirtualServiceSpecTlsRouteDestination {
             /**
              * The name of a service from the service registry.
              */
-            host?: string;
+            host: string;
             /**
              * Specifies the port on the host that is being addressed.
              */
@@ -2664,20 +4297,89 @@ export namespace networking {
          * Configuration affecting VMs onboarded into the mesh. See more details at: https://istio.io/docs/reference/config/networking/workload-entry.html
          */
         export interface WorkloadEntrySpec {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
             address?: string;
             /**
              * One or more labels associated with the endpoint.
              */
-            labels?: { [key: string]: string };
+            labels?: {[key: string]: string};
             /**
              * The locality associated with the endpoint.
              */
             locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
             network?: string;
             /**
              * Set of ports associated with the endpoint.
              */
-            ports?: { [key: string]: number };
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
+            serviceAccount?: string;
+            /**
+             * The load balancing weight associated with the endpoint.
+             */
+            weight?: number;
+        }
+
+        /**
+         * `WorkloadGroup` enables specifying the properties of a single workload for bootstrap and provides a template for `WorkloadEntry`, similar to how `Deployment` specifies properties of workloads via `Pod` templates.
+         */
+        export interface WorkloadGroupSpec {
+            /**
+             * Metadata that will be used for all corresponding `WorkloadEntries`.
+             */
+            metadata?: outputs.networking.v1beta1.WorkloadGroupSpecMetadata;
+            /**
+             * `ReadinessProbe` describes the configuration the user must provide for healthchecking on their workload.
+             */
+            probe?: any;
+            /**
+             * Template to be used for the generation of `WorkloadEntry` resources that belong to this `WorkloadGroup`.
+             */
+            template: outputs.networking.v1beta1.WorkloadGroupSpecTemplate;
+        }
+
+        /**
+         * Metadata that will be used for all corresponding `WorkloadEntries`.
+         */
+        export interface WorkloadGroupSpecMetadata {
+            annotations?: {[key: string]: string};
+            labels?: {[key: string]: string};
+        }
+
+        /**
+         * Template to be used for the generation of `WorkloadEntry` resources that belong to this `WorkloadGroup`.
+         */
+        export interface WorkloadGroupSpecTemplate {
+            /**
+             * Address associated with the network endpoint without the port.
+             */
+            address?: string;
+            /**
+             * One or more labels associated with the endpoint.
+             */
+            labels?: {[key: string]: string};
+            /**
+             * The locality associated with the endpoint.
+             */
+            locality?: string;
+            /**
+             * Network enables Istio to group endpoints resident in the same L3 domain/network.
+             */
+            network?: string;
+            /**
+             * Set of ports associated with the endpoint.
+             */
+            ports?: {[key: string]: number};
+            /**
+             * The service account associated with the workload if a sidecar is present in the workload.
+             */
             serviceAccount?: string;
             /**
              * The load balancing weight associated with the endpoint.
@@ -2689,9 +4391,109 @@ export namespace networking {
 }
 
 export namespace security {
+    export namespace v1 {
+        /**
+         * Request authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/request_authentication.html
+         */
+        export interface RequestAuthenticationSpec {
+            /**
+             * Define the list of JWTs that can be validated at the selected workloads' proxy.
+             */
+            jwtRules?: outputs.security.v1.RequestAuthenticationSpecJwtRules[];
+            /**
+             * Optional.
+             */
+            selector?: outputs.security.v1.RequestAuthenticationSpecSelector;
+            targetRef?: outputs.security.v1.RequestAuthenticationSpecTargetRef;
+        }
+
+        export interface RequestAuthenticationSpecJwtRules {
+            /**
+             * The list of JWT [audiences](https://tools.ietf.org/html/rfc7519#section-4.1.3) that are allowed to access.
+             */
+            audiences?: string[];
+            /**
+             * If set to true, the original token will be kept for the upstream request.
+             */
+            forwardOriginalToken?: boolean;
+            /**
+             * List of header locations from which JWT is expected.
+             */
+            fromHeaders?: outputs.security.v1.RequestAuthenticationSpecJwtRulesFromHeaders[];
+            /**
+             * List of query parameters from which JWT is expected.
+             */
+            fromParams?: string[];
+            /**
+             * Identifies the issuer that issued the JWT.
+             */
+            issuer: string;
+            /**
+             * JSON Web Key Set of public keys to validate signature of the JWT.
+             */
+            jwks?: string;
+            /**
+             * URL of the provider's public key set to validate signature of the JWT.
+             */
+            jwksUri?: string;
+            /**
+             * URL of the provider's public key set to validate signature of the JWT.
+             */
+            jwks_uri?: string;
+            /**
+             * This field specifies a list of operations to copy the claim to HTTP headers on a successfully verified token.
+             */
+            outputClaimToHeaders?: outputs.security.v1.RequestAuthenticationSpecJwtRulesOutputClaimToHeaders[];
+            /**
+             * This field specifies the header name to output a successfully verified JWT payload to the backend.
+             */
+            outputPayloadToHeader?: string;
+        }
+
+        export interface RequestAuthenticationSpecJwtRulesFromHeaders {
+            /**
+             * The HTTP header name.
+             */
+            name: string;
+            /**
+             * The prefix that should be stripped before decoding the token.
+             */
+            prefix?: string;
+        }
+
+        export interface RequestAuthenticationSpecJwtRulesOutputClaimToHeaders {
+            /**
+             * The name of the claim to be copied from.
+             */
+            claim?: string;
+            /**
+             * The name of the header to be created.
+             */
+            header?: string;
+        }
+
+        /**
+         * Optional.
+         */
+        export interface RequestAuthenticationSpecSelector {
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
+        }
+
+        export interface RequestAuthenticationSpecTargetRef {
+            group?: string;
+            kind?: string;
+            name?: string;
+            namespace?: string;
+        }
+
+    }
+
     export namespace v1beta1 {
         /**
-         * PeerAuthentication defines how traffic will be tunneled (or not) to the sidecar.
+         * Peer authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/peer_authentication.html
          */
         export interface PeerAuthenticationSpec {
             /**
@@ -2701,7 +4503,7 @@ export namespace security {
             /**
              * Port specific mutual TLS settings.
              */
-            portLevelMtls?: { [key: string]: outputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtls };
+            portLevelMtls?: {[key: string]: outputs.security.v1beta1.PeerAuthenticationSpecPortLevelMtls};
             /**
              * The selector determines the workloads to apply the ChannelAuthentication on.
              */
@@ -2729,11 +4531,14 @@ export namespace security {
          * The selector determines the workloads to apply the ChannelAuthentication on.
          */
         export interface PeerAuthenticationSpecSelector {
-            matchLabels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
         }
 
         /**
-         * RequestAuthentication defines what request authentication methods are supported by a workload.
+         * Request authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/request_authentication.html
          */
         export interface RequestAuthenticationSpec {
             /**
@@ -2741,15 +4546,19 @@ export namespace security {
              */
             jwtRules?: outputs.security.v1beta1.RequestAuthenticationSpecJwtRules[];
             /**
-             * The selector determines the workloads to apply the RequestAuthentication on.
+             * Optional.
              */
             selector?: outputs.security.v1beta1.RequestAuthenticationSpecSelector;
+            targetRef?: outputs.security.v1beta1.RequestAuthenticationSpecTargetRef;
         }
 
         export interface RequestAuthenticationSpecJwtRules {
+            /**
+             * The list of JWT [audiences](https://tools.ietf.org/html/rfc7519#section-4.1.3) that are allowed to access.
+             */
             audiences?: string[];
             /**
-             * If set to true, the orginal token will be kept for the ustream request.
+             * If set to true, the original token will be kept for the upstream request.
              */
             forwardOriginalToken?: boolean;
             /**
@@ -2763,13 +4572,26 @@ export namespace security {
             /**
              * Identifies the issuer that issued the JWT.
              */
-            issuer?: string;
+            issuer: string;
             /**
              * JSON Web Key Set of public keys to validate signature of the JWT.
              */
             jwks?: string;
+            /**
+             * URL of the provider's public key set to validate signature of the JWT.
+             */
             jwksUri?: string;
+            /**
+             * URL of the provider's public key set to validate signature of the JWT.
+             */
             jwks_uri?: string;
+            /**
+             * This field specifies a list of operations to copy the claim to HTTP headers on a successfully verified token.
+             */
+            outputClaimToHeaders?: outputs.security.v1beta1.RequestAuthenticationSpecJwtRulesOutputClaimToHeaders[];
+            /**
+             * This field specifies the header name to output a successfully verified JWT payload to the backend.
+             */
             outputPayloadToHeader?: string;
         }
 
@@ -2777,126 +4599,48 @@ export namespace security {
             /**
              * The HTTP header name.
              */
-            name?: string;
+            name: string;
             /**
              * The prefix that should be stripped before decoding the token.
              */
             prefix?: string;
         }
 
+        export interface RequestAuthenticationSpecJwtRulesOutputClaimToHeaders {
+            /**
+             * The name of the claim to be copied from.
+             */
+            claim?: string;
+            /**
+             * The name of the header to be created.
+             */
+            header?: string;
+        }
+
         /**
-         * The selector determines the workloads to apply the RequestAuthentication on.
+         * Optional.
          */
         export interface RequestAuthenticationSpecSelector {
-            matchLabels?: { [key: string]: string };
-        }
-
-
-        export interface AuthorizationRuleSpecSelectorArgs {
             /**
-             * matchLabels is a map of {key,value} pairs. 
-             * A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, 
-             * whose key field is "key", the operator is "In", 
-             * and the values array contains only "value". 
-             * The requirements are ANDed.
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
              */
-            matchLabels?: { [key: string]: string; };
+            matchLabels?: {[key: string]: string};
         }
 
-        export interface AuthorizationRuleSpecRulesArgs {
-            from?: AuthorizationRuleSpecRulesFromArgs[];
-
-            to?: AuthorizationRuleSpecRulesToArgs[];
-
-            when?: AuthorizationRuleSpecRulesWhenArgs[];
-        }
-
-        export interface AuthorizationRuleSpecRulesFromArgs {
-            source: AuthorizationRuleSpecRulesFromSourceArgs;
-        }
-
-        export interface AuthorizationRuleSpecRulesFromSourceArgs {
-            principals?: string[];
-
-            notPrincipals?: string[];
-
-            requestPrincipals?: string[];
-
-            notRequestPrincipals?: string[];
-
-            namespaces?: string[];
-
-            notNamespaces?: string[];
-
-            ipBlocks?: string[];
-
-            notIpBlocks?: string[];
-
-            remoteIpBlocks?: string[];
-
-            notRemoteIpBlocks?: string[];
-        }
-
-        export interface AuthorizationRuleSpecRulesToArgs {
-            operation: AuthorizationRuleSpecRulesToOperationArgs;
-        }
-
-        export interface AuthorizationRuleSpecRulesToOperationArgs {
-            hosts?: string[];
-
-            notHosts?: string[];
-
-            ports?: string[];
-
-            notPorts?: string[];
-
-            methods?: string[];
-
-            notMethods?: string[];
-
-            paths?: string[];
-
-            notPaths?: string[];
-        }
-
-        export interface AuthorizationRuleSpecRulesWhenArgs {
-
-            /**
-             * List of available value.
-             * https://istio.io/latest/docs/reference/config/security/conditions/
-             */
-            key: string;
-
-            values?: string[];
-
-            notValues?: string[];
-        }
-
-        /**
-         * Specifies the name of the extension provider. 
-         * The list of available providers is defined in the MeshConfig. 
-         * Note, currently at most 1 extension provider is allowed per workload. 
-         * Different workloads can use different extension provider.
-         */
-        export interface AuthorizationRuleSpecProviderArgs {
+        export interface RequestAuthenticationSpecTargetRef {
+            group?: string;
+            kind?: string;
             name?: string;
+            namespace?: string;
         }
 
-        export declare const ActionSpecType: {
-            readonly ALLOW: "ALLOW";
-            readonly DENY: "DENY";
-            readonly AUDIT: "AUDIT";
-            readonly CUSTOM: "CUSTOM";
-        };
-
-        export declare type ActionSpecType = (typeof ActionSpecType)[keyof typeof ActionSpecType];
     }
 }
 
 export namespace telemetry {
     export namespace v1alpha1 {
         /**
-         * Telemetry defines how the telemetry is generated for workloads within a mesh.
+         * Telemetry configuration for workloads. See more details at: https://istio.io/docs/reference/config/telemetry.html
          */
         export interface TelemetrySpec {
             /**
@@ -2911,6 +4655,7 @@ export namespace telemetry {
              * Optional.
              */
             selector?: outputs.telemetry.v1alpha1.TelemetrySpecSelector;
+            targetRef?: outputs.telemetry.v1alpha1.TelemetrySpecTargetRef;
             /**
              * Optional.
              */
@@ -2925,14 +4670,42 @@ export namespace telemetry {
             /**
              * Optional.
              */
+            filter?: outputs.telemetry.v1alpha1.TelemetrySpecAccessLoggingFilter;
+            /**
+             * Allows tailoring of logging behavior to specific conditions.
+             */
+            match?: outputs.telemetry.v1alpha1.TelemetrySpecAccessLoggingMatch;
+            /**
+             * Optional.
+             */
             providers?: outputs.telemetry.v1alpha1.TelemetrySpecAccessLoggingProviders[];
+        }
+
+        /**
+         * Optional.
+         */
+        export interface TelemetrySpecAccessLoggingFilter {
+            /**
+             * CEL expression for selecting when requests/connections should be logged.
+             */
+            expression?: string;
+        }
+
+        /**
+         * Allows tailoring of logging behavior to specific conditions.
+         */
+        export interface TelemetrySpecAccessLoggingMatch {
+            /**
+             * This determines whether or not to apply the access logging configuration based on the direction of traffic relative to the proxied workload.
+             */
+            mode?: string;
         }
 
         export interface TelemetrySpecAccessLoggingProviders {
             /**
              * Required.
              */
-            name?: string;
+            name: string;
         }
 
         export interface TelemetrySpecMetrics {
@@ -2944,6 +4717,10 @@ export namespace telemetry {
              * Optional.
              */
             providers?: outputs.telemetry.v1alpha1.TelemetrySpecMetricsProviders[];
+            /**
+             * Optional.
+             */
+            reportingInterval?: string;
         }
 
         export interface TelemetrySpecMetricsOverrides {
@@ -2958,7 +4735,7 @@ export namespace telemetry {
             /**
              * Optional.
              */
-            tagOverrides?: { [key: string]: outputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverrides };
+            tagOverrides?: {[key: string]: outputs.telemetry.v1alpha1.TelemetrySpecMetricsOverridesTagOverrides};
         }
 
         export interface TelemetrySpecMetricsOverridesTagOverrides {
@@ -2976,37 +4753,66 @@ export namespace telemetry {
             /**
              * Required.
              */
-            name?: string;
+            name: string;
         }
 
         /**
          * Optional.
          */
         export interface TelemetrySpecSelector {
-            matchLabels?: { [key: string]: string };
+            /**
+             * One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.
+             */
+            matchLabels?: {[key: string]: string};
+        }
+
+        export interface TelemetrySpecTargetRef {
+            group?: string;
+            kind?: string;
+            name?: string;
+            namespace?: string;
         }
 
         export interface TelemetrySpecTracing {
             /**
              * Optional.
              */
-            customTags?: { [key: string]: any };
+            customTags?: {[key: string]: any};
             /**
              * Controls span reporting.
              */
             disableSpanReporting?: boolean;
             /**
+             * Allows tailoring of behavior to specific conditions.
+             */
+            match?: outputs.telemetry.v1alpha1.TelemetrySpecTracingMatch;
+            /**
              * Optional.
              */
             providers?: outputs.telemetry.v1alpha1.TelemetrySpecTracingProviders[];
+            /**
+             * Controls the rate at which traffic will be selected for tracing if no prior sampling decision has been made.
+             */
             randomSamplingPercentage?: number;
+            useRequestIdForTraceSampling?: boolean;
+        }
+
+        /**
+         * Allows tailoring of behavior to specific conditions.
+         */
+        export interface TelemetrySpecTracingMatch {
+            /**
+             * This determines whether or not to apply the tracing configuration based on the direction of traffic relative to the proxied workload.
+             */
+            mode?: string;
         }
 
         export interface TelemetrySpecTracingProviders {
             /**
              * Required.
              */
-            name?: string;
+            name: string;
         }
+
     }
 }

@@ -1,8 +1,8 @@
 {
-    "name": "@rugal/pulumi-istio",
-    "version": "1.0.5",
+    "name": "@taxistake/pulumi-istio",
+    "version": "1.20.0",
     "license": "MIT",
-    "homepage": "https://github.com/Rugal/pulumi-istio",
+    "homepage": "https://github.com/con5cience/pulumi-istio",
     "keywords": [
         "pulumi",
         "istio",
@@ -10,10 +10,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Rugal/pulumi-istio.git"
+        "url": "https://github.com/con5cience/pulumi-istio.git"
     },
     "scripts": {
-        "build": "rm -rf ./bin && tsc && cp package.json README.md bin"
+        "build": "rm -rf ./bin && node_modules/.bin/tsc && cp package.json README.md bin"
     },
     "dependencies": {
         "@pulumi/kubernetes": "^3.6.3",

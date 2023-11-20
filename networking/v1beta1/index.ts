@@ -5,20 +5,46 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../../utilities";
 
 // Export members:
-export * from "./destinationRule";
-export * from "./gateway";
-export * from "./serviceEntry";
-export * from "./sidecar";
-export * from "./virtualService";
-export * from "./workloadEntry";
+export { DestinationRuleArgs } from "./destinationRule";
+export type DestinationRule = import("./destinationRule").DestinationRule;
+export const DestinationRule: typeof import("./destinationRule").DestinationRule = null as any;
+utilities.lazyLoad(exports, ["DestinationRule"], () => require("./destinationRule"));
 
-// Import resources to register:
-import { DestinationRule } from "./destinationRule";
-import { Gateway } from "./gateway";
-import { ServiceEntry } from "./serviceEntry";
-import { Sidecar } from "./sidecar";
-import { VirtualService } from "./virtualService";
-import { WorkloadEntry } from "./workloadEntry";
+export { GatewayArgs } from "./gateway";
+export type Gateway = import("./gateway").Gateway;
+export const Gateway: typeof import("./gateway").Gateway = null as any;
+utilities.lazyLoad(exports, ["Gateway"], () => require("./gateway"));
+
+export { ProxyConfigArgs } from "./proxyConfig";
+export type ProxyConfig = import("./proxyConfig").ProxyConfig;
+export const ProxyConfig: typeof import("./proxyConfig").ProxyConfig = null as any;
+utilities.lazyLoad(exports, ["ProxyConfig"], () => require("./proxyConfig"));
+
+export { ServiceEntryArgs } from "./serviceEntry";
+export type ServiceEntry = import("./serviceEntry").ServiceEntry;
+export const ServiceEntry: typeof import("./serviceEntry").ServiceEntry = null as any;
+utilities.lazyLoad(exports, ["ServiceEntry"], () => require("./serviceEntry"));
+
+export { SidecarArgs } from "./sidecar";
+export type Sidecar = import("./sidecar").Sidecar;
+export const Sidecar: typeof import("./sidecar").Sidecar = null as any;
+utilities.lazyLoad(exports, ["Sidecar"], () => require("./sidecar"));
+
+export { VirtualServiceArgs } from "./virtualService";
+export type VirtualService = import("./virtualService").VirtualService;
+export const VirtualService: typeof import("./virtualService").VirtualService = null as any;
+utilities.lazyLoad(exports, ["VirtualService"], () => require("./virtualService"));
+
+export { WorkloadEntryArgs } from "./workloadEntry";
+export type WorkloadEntry = import("./workloadEntry").WorkloadEntry;
+export const WorkloadEntry: typeof import("./workloadEntry").WorkloadEntry = null as any;
+utilities.lazyLoad(exports, ["WorkloadEntry"], () => require("./workloadEntry"));
+
+export { WorkloadGroupArgs } from "./workloadGroup";
+export type WorkloadGroup = import("./workloadGroup").WorkloadGroup;
+export const WorkloadGroup: typeof import("./workloadGroup").WorkloadGroup = null as any;
+utilities.lazyLoad(exports, ["WorkloadGroup"], () => require("./workloadGroup"));
+
 
 const _module = {
     version: utilities.getVersion(),
@@ -28,6 +54,8 @@ const _module = {
                 return new DestinationRule(name, <any>undefined, { urn })
             case "kubernetes:networking.istio.io/v1beta1:Gateway":
                 return new Gateway(name, <any>undefined, { urn })
+            case "kubernetes:networking.istio.io/v1beta1:ProxyConfig":
+                return new ProxyConfig(name, <any>undefined, { urn })
             case "kubernetes:networking.istio.io/v1beta1:ServiceEntry":
                 return new ServiceEntry(name, <any>undefined, { urn })
             case "kubernetes:networking.istio.io/v1beta1:Sidecar":
@@ -36,6 +64,8 @@ const _module = {
                 return new VirtualService(name, <any>undefined, { urn })
             case "kubernetes:networking.istio.io/v1beta1:WorkloadEntry":
                 return new WorkloadEntry(name, <any>undefined, { urn })
+            case "kubernetes:networking.istio.io/v1beta1:WorkloadGroup":
+                return new WorkloadGroup(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

@@ -5,21 +5,21 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../../utilities";
 
 // Export members:
-export { TelemetryArgs } from "./telemetry";
-export type Telemetry = import("./telemetry").Telemetry;
-export const Telemetry: typeof import("./telemetry").Telemetry = null as any;
-utilities.lazyLoad(exports, ["Telemetry"], () => require("./telemetry"));
+export { WasmPluginArgs } from "./wasmPlugin";
+export type WasmPlugin = import("./wasmPlugin").WasmPlugin;
+export const WasmPlugin: typeof import("./wasmPlugin").WasmPlugin = null as any;
+utilities.lazyLoad(exports, ["WasmPlugin"], () => require("./wasmPlugin"));
 
 
 const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
         switch (type) {
-            case "kubernetes:telemetry.istio.io/v1alpha1:Telemetry":
-                return new Telemetry(name, <any>undefined, { urn })
+            case "kubernetes:extensions.istio.io/v1alpha1:WasmPlugin":
+                return new WasmPlugin(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
     },
 };
-pulumi.runtime.registerResourceModule("crds", "telemetry.istio.io/v1alpha1", _module)
+pulumi.runtime.registerResourceModule("crds", "extensions.istio.io/v1alpha1", _module)

@@ -10,11 +10,6 @@ export type AuthorizationPolicy = import("./authorizationPolicy").AuthorizationP
 export const AuthorizationPolicy: typeof import("./authorizationPolicy").AuthorizationPolicy = null as any;
 utilities.lazyLoad(exports, ["AuthorizationPolicy"], () => require("./authorizationPolicy"));
 
-export { PeerAuthenticationArgs } from "./peerAuthentication";
-export type PeerAuthentication = import("./peerAuthentication").PeerAuthentication;
-export const PeerAuthentication: typeof import("./peerAuthentication").PeerAuthentication = null as any;
-utilities.lazyLoad(exports, ["PeerAuthentication"], () => require("./peerAuthentication"));
-
 export { RequestAuthenticationArgs } from "./requestAuthentication";
 export type RequestAuthentication = import("./requestAuthentication").RequestAuthentication;
 export const RequestAuthentication: typeof import("./requestAuthentication").RequestAuthentication = null as any;
@@ -25,15 +20,13 @@ const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
         switch (type) {
-            case "kubernetes:security.istio.io/v1beta1:AuthorizationPolicy":
+            case "kubernetes:security.istio.io/v1:AuthorizationPolicy":
                 return new AuthorizationPolicy(name, <any>undefined, { urn })
-            case "kubernetes:security.istio.io/v1beta1:PeerAuthentication":
-                return new PeerAuthentication(name, <any>undefined, { urn })
-            case "kubernetes:security.istio.io/v1beta1:RequestAuthentication":
+            case "kubernetes:security.istio.io/v1:RequestAuthentication":
                 return new RequestAuthentication(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
     },
 };
-pulumi.runtime.registerResourceModule("crds", "security.istio.io/v1beta1", _module)
+pulumi.runtime.registerResourceModule("crds", "security.istio.io/v1", _module)

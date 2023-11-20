@@ -5,13 +5,13 @@
 ### installation
 
 ```shell
-yarn add @rugal/pulumi-istio
+yarn add @taxistake/pulumi-istio
 ```
 
 ### create CRD just like K8S
 
 ```typescript
-import * as istio from "@rugal/pulumi-istio";
+import * as istio from "@taxistake/pulumi-istio";
 
 const vs = new istio.networking.v1beta1.VirtualService(name, {
       metadata: {
